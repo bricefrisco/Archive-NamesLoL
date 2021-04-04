@@ -7,4 +7,3 @@ export const fetchSummoner = (name: string) => {
         }
     }).then(res => res.json());
 }
-
