@@ -4,12 +4,15 @@ import bodyParser from 'body-parser'
 import {fetchSummoner} from "./riot-api";
 import {mapRegion, mapSummoner} from "./mapper";
 import {querySummoners, updateSummoner} from "./dynamo-db";
+import {addNamesFromFile} from "./generator";
 
 dotenv.config()
 const app = express()
 const port = 8080
 
 app.use(bodyParser.json())
+
+// addNamesFromFile()
 
 app.get('/:region/summoners', (req, res) => {
     const region = mapRegion(req.params.region)

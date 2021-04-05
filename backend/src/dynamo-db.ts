@@ -38,7 +38,7 @@ export const querySummoners = (region: Region, lastItem?: any) => {
     return new Promise((res, rej) => {
         client.query({
             TableName: 'lol-summoners',
-            Limit: 5,
+            Limit: 20,
             ExpressionAttributeValues: {
                 ':region': region
             },
