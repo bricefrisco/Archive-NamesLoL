@@ -3,7 +3,17 @@ import dotenv from "dotenv";
 dotenv.config()
 
 export enum Region {
-    NA = 'NA'
+    NA = 'NA',
+    BR = 'BR',
+    EUNE = 'EUNE',
+    EUW = 'EUW',
+    JP = 'JP',
+    KR = 'KR',
+    LAN = 'LAN',
+    LAS = 'LAS',
+    OCE = 'OCE',
+    TR = 'TR',
+    RU = 'RU'
 }
 
 export interface SummonerEntity {
@@ -58,20 +68,23 @@ export const querySummoners = (name: string, region: Region) => {
 }
 
 export const updateSummoner = (summoner: SummonerEntity) => {
-    return new Promise<void>((res, rej) => {
-        client.update({
-            TableName: 'lol-summoners',
-            Key: {n: summoner.name, r: summoner.region },
-            ExpressionAttributeValues: {
-                ':aid': summoner.accountId,
-                ':rd': summoner.revisionDate,
-                ':ad': summoner.availabilityDate
-            },
-            UpdateExpression: 'set aid = :aid, rd = :rd, ad = :ad'
-        }, (err, data) => {
-            if (err) rej(err)
-            else res()
-        })
+    console.log('Updating summoner ' + summoner.name)
+
+    client.update({
+        TableName: 'lol-summoners',
+        Key: {n: summoner.name.toLowerCase(), r: summoner.region.toLowerCase() },
+        ExpressionAttributeValues: {
+            ':aid': summoner.accountId,
+            ':rd': summoner.revisionDate,
+            ':ad': summoner.availabilityDate
+        },
+        UpdateExpression: 'set aid = :aid, rd = :rd, ad = :ad'
+    }, (err, data) => {
+        if (err) {
+            console.log(err)
+        } else {
+            console.log('Successfully updated summoner', summoner.name)
+        }
     })
 }
 
