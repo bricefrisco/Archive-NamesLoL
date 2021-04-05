@@ -11,10 +11,18 @@ const calcAvailabilityDate = (revisionDate: number, summonerLevel: number) : num
 export const mapRegion = (region: string) : Region => {
     if (region === undefined || region === null || region === '') return undefined;
     switch(region.toUpperCase()) {
-        case 'NA':
-            return Region.NA
-        default:
-            return undefined
+        case 'NA': return Region.NA
+        case 'BR': return Region.BR
+        case 'EUNE': return Region.EUNE
+        case 'EUW': return Region.EUW
+        case 'JP': return Region.JP
+        case 'KR': return Region.KR
+        case 'LAN': return Region.LAN
+        case 'LAS': return Region.LAS
+        case 'OCE': return Region.OCE
+        case 'TR': return Region.TR
+        case 'RU': return Region.RU
+        default: return undefined
     }
 }
 
@@ -22,6 +30,7 @@ export const mapSummoner = (summoner: SummonerDTO, region: Region) : SummonerEnt
     return ({
         ...summoner,
         region,
+        level: summoner.summonerLevel,
         availabilityDate: calcAvailabilityDate(summoner.revisionDate, summoner.summonerLevel)
     })
 }

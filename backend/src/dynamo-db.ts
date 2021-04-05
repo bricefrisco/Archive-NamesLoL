@@ -1,19 +1,20 @@
 import AWS from 'aws-sdk'
 import dotenv from "dotenv";
+
 dotenv.config()
 
 export enum Region {
-    NA = 'NA',
-    BR = 'BR',
-    EUNE = 'EUNE',
-    EUW = 'EUW',
-    JP = 'JP',
-    KR = 'KR',
-    LAN = 'LAN',
-    LAS = 'LAS',
-    OCE = 'OCE',
-    TR = 'TR',
-    RU = 'RU'
+    NA = 'na',
+    BR = 'br',
+    EUNE = 'eune',
+    EUW = 'euw',
+    JP = 'jp',
+    KR = 'kr',
+    LAN = 'lan',
+    LAS = 'las',
+    OCE = 'oce',
+    TR = 'tr',
+    RU = 'ru'
 }
 
 export interface SummonerEntity {
@@ -22,6 +23,7 @@ export interface SummonerEntity {
     accountId: string,
     revisionDate: number,
     availabilityDate: number
+    level: number
 }
 
 AWS.config.update({
@@ -32,19 +34,17 @@ AWS.config.update({
 
 const client = new AWS.DynamoDB.DocumentClient();
 
-export const getSummoner = (name: string, region: Region) => {
+export const querySummoners = (region: Region, lastItem?: any) => {
     return new Promise((res, rej) => {
         client.query({
             TableName: 'lol-summoners',
-            ExpressionAttributeNames: {
-                '#name': 'name',
-                '#region': 'region'
-            },
+            Limit: 5,
             ExpressionAttributeValues: {
-                ':name': name,
                 ':region': region
             },
-            KeyConditionExpression: '#name = :name and #region = :region',
+            ExclusiveStartKey: lastItem,
+            KeyConditionExpression: 'r = :region',
+            IndexName: 'region-activation-date-index'
         }, (err, data) => {
             if (err) rej(err)
             else res(data)
@@ -52,39 +52,23 @@ export const getSummoner = (name: string, region: Region) => {
     })
 }
 
-export const querySummoners = (name: string, region: Region) => {
-    return new Promise((res, rej) => {
-        client.get({
-            TableName: 'lol-summoners',
-            Key: {
-                name,
-                region
-            }
-        }, (err, data) => {
-            if (err) rej(err)
-            else res(data)
-        })
-    })
-}
-
-export const updateSummoner = (summoner: SummonerEntity) => {
-    console.log('Updating summoner ' + summoner.name)
-
+export const updateSummoner = (summoner: SummonerEntity): void => {
     client.update({
         TableName: 'lol-summoners',
-        Key: {n: summoner.name.toLowerCase(), r: summoner.region.toLowerCase() },
+        Key: {
+            n: summoner.region + '-' + summoner.name.toLowerCase(),
+            ad: summoner.availabilityDate
+        },
         ExpressionAttributeValues: {
+            ':r': summoner.region,
             ':aid': summoner.accountId,
             ':rd': summoner.revisionDate,
-            ':ad': summoner.availabilityDate
+            ':l': summoner.level
         },
-        UpdateExpression: 'set aid = :aid, rd = :rd, ad = :ad'
+        UpdateExpression: 'set r = :r, aid = :aid, rd = :rd, l = :l'
     }, (err, data) => {
-        if (err) {
-            console.log(err)
-        } else {
-            console.log('Successfully updated summoner', summoner.name)
-        }
+        if (err) console.log(err)
+        else console.log('Successfully updated summoner in DynamoDB:', summoner.region + '-' + summoner.name)
     })
 }
 
