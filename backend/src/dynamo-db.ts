@@ -6,6 +6,14 @@ export enum Region {
     NA = 'NA'
 }
 
+export interface SummonerEntity {
+    name: string,
+    region: Region,
+    accountId: string,
+    revisionDate: number,
+    availabilityDate: number
+}
+
 AWS.config.update({
     region: process.env.AWS_REGION,
     accessKeyId: process.env.AWS_ACCESS_KEY,
@@ -49,15 +57,17 @@ export const querySummoners = (name: string, region: Region) => {
     })
 }
 
-export const updateSummoner = (name: string, region: Region, bar: string) => {
+export const updateSummoner = (summoner: SummonerEntity) => {
     return new Promise<void>((res, rej) => {
         client.update({
             TableName: 'lol-summoners',
-            Key: {name, region},
+            Key: {n: summoner.name, r: summoner.region },
             ExpressionAttributeValues: {
-                ':bar': bar
+                ':aid': summoner.accountId,
+                ':rd': summoner.revisionDate,
+                ':ad': summoner.availabilityDate
             },
-            UpdateExpression: 'set foo = :bar'
+            UpdateExpression: 'set aid = :aid, rd = :rd, ad = :ad'
         }, (err, data) => {
             if (err) rej(err)
             else res()

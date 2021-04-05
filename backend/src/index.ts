@@ -3,6 +3,7 @@ import dotenv from 'dotenv'
 import bodyParser from 'body-parser'
 import {fetchSummoner} from "./riot-api";
 import {deleteSummoner, Region, updateSummoner} from "./dynamo-db";
+import {mapRegion, mapSummoner} from "./mapper";
 
 dotenv.config()
 const app = express()
@@ -11,14 +12,15 @@ const port = 8080
 app.use(bodyParser.json())
 
 app.get('/summoners/:region/:name', (req, res) => {
-    fetchSummoner(req.params.name)
-        .then((response) => res.json(response))
-        .catch((err) => res.status(500).json(err.message))
-})
+    const region = mapRegion(req.params.region)
+    if (region === undefined) {
+        res.status(400).json('Region is invalid.')
+        return
+    }
 
-app.post('/summoners', (req, res) => {
-    updateSummoner(req.body.name, Region.NA, req.body.bar)
-        .then(() => res.json('Successfully added/updated summoner.'))
+    fetchSummoner(req.params.name)
+        .then((summoner) => mapSummoner(summoner, region))
+        .then((summoner) => res.json(summoner))
         .catch((err) => res.status(500).json(err.message))
 })
 

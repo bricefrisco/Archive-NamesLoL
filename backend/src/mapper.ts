@@ -1,30 +1,27 @@
-import {Region} from "./dynamo-db";
+import {Region, SummonerEntity} from "./dynamo-db";
+import {SummonerDTO} from "./riot-api";
 
-interface SummonerDTO {
-    accountId: string,
-    profileIconId: number,
-    revisionDate: number,
-    name: string,
-    id: string,
-    puuid: string,
-    summonerLevel: number
+const calcAvailabilityDate = (revisionDate: number, summonerLevel: number) : number => {
+    const date = new Date(revisionDate)
+    if (summonerLevel <= 6) return new Date(date.setMonth(date.getMonth() + 6)).valueOf();
+    if (summonerLevel >= 30) return new Date(date.setMonth(date.getMonth() + 30)).valueOf();
+    return new Date(date.setMonth(date.getMonth() + summonerLevel)).valueOf();
 }
 
-export interface SummonerInfoDTO {
-    name: string,
-    region: Region,
-    accountId: string,
-    revisionDate: number,
-    nameExpirationDate: number,
-    id: string,
-    puuid: string,
-    summonerLevel: number
+export const mapRegion = (region: string) : Region => {
+    if (region === undefined || region === null || region === '') return undefined;
+    switch(region.toUpperCase()) {
+        case 'NA':
+            return Region.NA
+        default:
+            return undefined
+    }
 }
 
-const mapSummoner = (summoner: SummonerDTO, nameExpirationDate: number, region: Region) : SummonerInfoDTO => {
+export const mapSummoner = (summoner: SummonerDTO, region: Region) : SummonerEntity => {
     return ({
         ...summoner,
         region,
-        nameExpirationDate: 12345
+        availabilityDate: calcAvailabilityDate(summoner.revisionDate, summoner.summonerLevel)
     })
 }
