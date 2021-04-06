@@ -1,8 +1,14 @@
 import React from 'react';
 
+import Lookup from './components/Lookup'
+import Navigation from "./components/Navigation";
+
 function App() {
   return (
-      <div>Hello world!</div>
+      <>
+        <Navigation />
+        <Lookup />
+      </>
   );
 }
 

@@ -1,15 +1,23 @@
 import express from 'express'
+
 import dotenv from 'dotenv'
 import bodyParser from 'body-parser'
 import {fetchSummoner} from "./riot-api";
-import {mapRegion, mapSummoner} from "./mapper";
+import {DynamoSummonerList, mapRegion, mapSummoner, mapSummoners} from "./mapper";
 import {querySummoners, updateSummoner} from "./dynamo-db";
-import {addNamesFromFile} from "./generator";
+
+const cors = require('cors')
 
 dotenv.config()
 const app = express()
 const port = 8080
 
+const corsOptions = {
+    origin: 'http://localhost:3000',
+    optionsSuccessStatus: 200
+}
+
+app.use(cors(corsOptions))
 app.use(bodyParser.json())
 
 // addNamesFromFile()
@@ -35,6 +43,7 @@ app.get('/:region/summoners', (req, res) => {
     }
 
     querySummoners(region, lastItem)
+        .then((data: DynamoSummonerList) => mapSummoners(data))
         .then((data) => res.json(data))
         .catch((err) => {
             console.log(err)
@@ -55,7 +64,15 @@ app.get('/:region/summoners/:name', (req, res) => {
             res.json(summoner);
             updateSummoner(summoner);
         })
-        .catch((err) => res.status(500).json(err.message))
+        .catch((err) => {
+            if (err.message && err.message.includes('summoner not found')) {
+                res.status(200).json({
+                    name: req.params.name
+                })
+            } else {
+                res.status(500).json(err.message)
+            }
+        })
 })
 
 app.listen(port, () => {
