@@ -1,9 +1,16 @@
 import React from 'react'
-import {makeStyles} from "@material-ui/core";
+import {Divider, makeStyles, Typography} from "@material-ui/core";
 import SummonersTable from "./SummonersTable";
 import Filters from "./Filters";
 
 const useStyles = makeStyles((theme) => ({
+    title: {
+        textAlign: 'center',
+        fontSize: 48,
+        fontWeight: 500,
+        marginTop: theme.spacing(3),
+        marginBottom: theme.spacing(1)
+    },
     box: {
         display: 'flex',
         marginTop: theme.spacing(2),
@@ -16,10 +23,14 @@ const Summoners = () => {
     const classes = useStyles()
 
     return (
-        <div className={classes.box}>
-            <SummonersTable />
-            <Filters />
-        </div>
+        <>
+            <Typography variant='h2' className={classes.title}>League of Legends Names</Typography>
+            <Divider />
+            <div className={classes.box}>
+                <SummonersTable />
+                <Filters />
+            </div>
+        </>
     )
 }
 

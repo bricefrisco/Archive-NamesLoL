@@ -38,7 +38,7 @@ export const querySummoners = (region: Region, timestamp: number, backwards: boo
     return new Promise((res, rej) => {
         client.query({
             TableName: 'lol-summoners',
-            Limit: 20,
+            Limit: 50,
             ExpressionAttributeValues: {
                 ':region': region.toUpperCase(),
                 ':timestamp': timestamp,
@@ -57,7 +57,7 @@ export const querySummonersByNameSize = (region: Region, timestamp: number, back
     return new Promise((res, rej) => {
         client.query({
             TableName: 'lol-summoners',
-            Limit: 20,
+            Limit: 50,
             ExpressionAttributeValues: {
                 ':nameLength': region.toUpperCase() + '#' + nameSize,
                 ':timestamp': timestamp

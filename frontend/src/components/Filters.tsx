@@ -7,7 +7,8 @@ const useStyles = makeStyles((theme) => ({
         minWidth: 300,
         backgroundColor: '#fff',
         borderRadius: 5,
-        padding: theme.spacing(2)
+        padding: theme.spacing(2),
+        marginTop: theme.spacing(6)
     },
     title: {
         fontWeight: 500,
