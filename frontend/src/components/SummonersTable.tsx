@@ -15,7 +15,7 @@ interface Summoner {
 
 const useStyles = makeStyles((theme) => ({
     table: {
-        marginTop: theme.spacing(2)
+        maxWidth: 900,
     }
 }))
 
@@ -25,7 +25,7 @@ const SummonersTable = () => {
     const summoners = useSelector(getSummoners)
 
     useEffect(() => {
-        dispatch(fetchSummoners(0))
+        dispatch(fetchSummoners(new Date().valueOf(), false))
     }, [])
 
     if (!summoners) return null;
@@ -41,7 +41,7 @@ const SummonersTable = () => {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {summoners.summoners.map((summoner: Summoner) => (
+                    {summoners.map((summoner: Summoner) => (
                         <TableRow key={summoner.accountId}>
                             <TableCell>{summoner.name}</TableCell>
                             <TableCell>

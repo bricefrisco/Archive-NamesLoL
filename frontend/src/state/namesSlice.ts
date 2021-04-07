@@ -19,10 +19,8 @@ export const namesSlice = createSlice({
             errorMessage: undefined
         },
         pagination: {
-            page: 1,
-            lastItemName: undefined,
-            lastItemAD: undefined,
-            lastItemRegion: undefined,
+            backwards: undefined,
+            forwards: undefined
         }
     },
     reducers: {
@@ -30,13 +28,14 @@ export const namesSlice = createSlice({
             state.nameInput = action.payload;
         },
         setPage: (state, action) => {
-            state.pagination.page = action.payload;
+            state.pagination.backwards = action.payload.backwards;
+            state.pagination.forwards = action.payload.forwards;
         },
         setSummoner: (state, action) => {
             state.apiSummoner.loading = false;
             state.apiSummoner.error = false;
             state.apiSummoner.errorMessage = undefined;
-            state.summoner = action.payload
+            state.summoner = action.payload;
         },
         summonerLoading: (state) => {
             state.apiSummoner.loading = true;
@@ -92,14 +91,15 @@ export const fetchSummoner = () => (dispatch: any, getState: any) => {
         .catch((err) => dispatch(summonerErrored(err)))
 }
 
-export const fetchSummoners =  (page: number) => (dispatch: any, getState: any) => {
-    dispatch(setPage(page))
-
+export const fetchSummoners =  (timestamp: number, backwards: boolean) => (dispatch: any, getState: any) => {
     dispatch(summonersLoading())
 
-    fetch(`http://localhost:8080/na/summoners`)
+    fetch(`http://localhost:8080/na/summoners?timestamp=${timestamp}&backwards=${backwards}`)
         .then(parseResponse)
-        .then((summoners) => dispatch(setSummoners(summoners)))
+        .then((response) => {
+            dispatch(setSummoners(response.summoners))
+            dispatch(setPage({ forwards: response.forwards, backwards: response.backwards}))
+        })
         .catch((err) => dispatch(summonersErrored(err)))
 }
 

@@ -7,7 +7,7 @@ import {
 import {Container} from "@material-ui/core";
 import Summoner from "./Summoner";
 import NameInput from "./NameInput";
-import SummonersTable from "./SummonersTable";
+import Summoners from "./Summoners";
 
 const Lookup = () => {
     const summoner = useSelector(getSummoner);
@@ -18,7 +18,7 @@ const Lookup = () => {
             <NameInput />
             {summoner && <Summoner summoner={summoner}/>}
             {summonerApiValues.error && <div>{summonerApiValues.errorMessage}</div>}
-            <SummonersTable />
+            <Summoners />
         </Container>
     )
 };
