@@ -6,7 +6,7 @@ interface DynamoItem {
     aid: string,
     rd: number,
     l: number,
-    ad: string,
+    ad: number,
     n: string
 }
 
@@ -31,20 +31,21 @@ const calcAvailabilityDate = (revisionDate: number, summonerLevel: number) : num
 }
 
 export const mapSummoners = (dynamoResponse: DynamoSummonerList) => {
+    const summoners = dynamoResponse.Items
+        .sort((a, b) => a.ad - b.ad)
+        .map(i => ({
+        region: i.r,
+        accountId: i.aid,
+        revisionDate: i.rd,
+        level: i.l,
+        availabilityDate: i.ad,
+        name: i.n.split('#')[1].toLowerCase()
+    }))
+
     return ({
-        summoners: (dynamoResponse.Items.map(i => ({
-            region: i.r,
-            accountId: i.aid,
-            revisionDate: i.rd,
-            level: i.l,
-            availabilityDate: i.ad,
-            name: i.n.split('-')[1]
-        }))),
-        lastEvaluatedKey: dynamoResponse.LastEvaluatedKey && ({
-            availabilityDate: dynamoResponse.LastEvaluatedKey.ad,
-            region: dynamoResponse.LastEvaluatedKey.r,
-            name: dynamoResponse.LastEvaluatedKey.n
-        })
+        summoners,
+        forwards: summoners && summoners.length > 0 && summoners[summoners.length - 1].availabilityDate,
+        backwards: summoners && summoners.length > 0 && summoners[0].availabilityDate,
     })
 }
 

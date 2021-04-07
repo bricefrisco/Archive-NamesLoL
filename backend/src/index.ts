@@ -4,7 +4,8 @@ import dotenv from 'dotenv'
 import bodyParser from 'body-parser'
 import {fetchSummoner} from "./riot-api";
 import {DynamoSummonerList, mapRegion, mapSummoner, mapSummoners} from "./mapper";
-import {querySummoners, updateSummoner} from "./dynamo-db";
+import {querySummoners, querySummonersByNameSize, updateSummoner} from "./dynamo-db";
+import {addNamesFromFile} from "./generator";
 
 const cors = require('cors')
 
@@ -24,25 +25,25 @@ app.use(bodyParser.json())
 
 app.get('/:region/summoners', (req, res) => {
     const region = mapRegion(req.params.region)
-    if (region === undefined) {
-        res.status(400).json('Region is invalid.')
-        return
+    const timestamp = Number(req.query.timestamp)
+    const backwards = req.query.backwards !== undefined && req.query.backwards === 'true'
+    const nameLength = req.query.nameLength
+
+    if (timestamp === undefined) {
+        res.status(400).json('Invalid timestamp.')
     }
 
-    const lastItemName = req.query.lastItemName;
-    const lastItemAD = req.query.lastItemAD;
-    const lastItemRegion = req.query.lastItemRegion;
-
-    let lastItem;
-    if (lastItemName && lastItemAD && lastItemRegion) {
-        lastItem = {
-            n: lastItemName,
-            r: lastItemRegion,
-            ad: Number(lastItemAD.toString())
-        }
+    if (nameLength) {
+        querySummonersByNameSize(region, timestamp, backwards, Number(nameLength))
+            .then((data: DynamoSummonerList) => mapSummoners(data))
+            .then((data) => res.json(data))
+            .catch((err) => {
+                console.log(err)
+                res.status(500).json(err.message)
+            })
     }
 
-    querySummoners(region, lastItem)
+    querySummoners(region, timestamp, backwards)
         .then((data: DynamoSummonerList) => mapSummoners(data))
         .then((data) => res.json(data))
         .catch((err) => {
@@ -66,6 +67,7 @@ app.get('/:region/summoners/:name', (req, res) => {
         })
         .catch((err) => {
             if (err.message && err.message.includes('summoner not found')) {
+                console.log(`summoner ${req.params.name} not found.`)
                 res.status(200).json({
                     name: req.params.name
                 })

@@ -34,17 +34,37 @@ AWS.config.update({
 
 const client = new AWS.DynamoDB.DocumentClient();
 
-export const querySummoners = (region: Region, lastItem?: any) => {
+export const querySummoners = (region: Region, timestamp: number, backwards: boolean) => {
     return new Promise((res, rej) => {
         client.query({
             TableName: 'lol-summoners',
             Limit: 20,
             ExpressionAttributeValues: {
-                ':region': region
+                ':region': region.toUpperCase(),
+                ':timestamp': timestamp,
             },
-            ExclusiveStartKey: lastItem,
-            KeyConditionExpression: 'r = :region',
-            IndexName: 'region-activation-date-index'
+            KeyConditionExpression: backwards ? 'r = :region and ad <= :timestamp' : 'r = :region and ad >= :timestamp',
+            IndexName: 'region-activation-date-index',
+            ScanIndexForward: !backwards
+        }, (err, data) => {
+            if (err) rej(err)
+            else res(data)
+        })
+    })
+}
+
+export const querySummonersByNameSize = (region: Region, timestamp: number, backwards: boolean, nameSize: number) => {
+    return new Promise((res, rej) => {
+        client.query({
+            TableName: 'lol-summoners',
+            Limit: 20,
+            ExpressionAttributeValues: {
+                ':nameLength': region.toUpperCase() + '#' + nameSize,
+                ':timestamp': timestamp
+            },
+            KeyConditionExpression: backwards ? 'nl = :nameLength and ad <= :timestamp' : 'nl = :nameLength and ad >= timestamp',
+            IndexName: 'name-length-availability-date-index',
+            ScanIndexForward: !backwards
         }, (err, data) => {
             if (err) rej(err)
             else res(data)
@@ -56,19 +76,20 @@ export const updateSummoner = (summoner: SummonerEntity): void => {
     client.update({
         TableName: 'lol-summoners',
         Key: {
-            n: summoner.region + '-' + summoner.name.toLowerCase(),
+            n: summoner.region.toUpperCase() + '#' + summoner.name.toUpperCase(),
             ad: summoner.availabilityDate
         },
         ExpressionAttributeValues: {
-            ':r': summoner.region,
+            ':r': summoner.region.toUpperCase(),
             ':aid': summoner.accountId,
             ':rd': summoner.revisionDate,
-            ':l': summoner.level
+            ':l': summoner.level,
+            ':nl': summoner.region.toUpperCase() + '#' + summoner.name.length
         },
-        UpdateExpression: 'set r = :r, aid = :aid, rd = :rd, l = :l'
+        UpdateExpression: 'set r = :r, aid = :aid, rd = :rd, l = :l, nl = :nl'
     }, (err, data) => {
         if (err) console.log(err)
-        else console.log('Successfully updated summoner in DynamoDB:', summoner.region + '-' + summoner.name)
+        else console.log('Successfully updated summoner in DynamoDB:', summoner.region.toUpperCase() + '#' + summoner.name.toUpperCase())
     })
 }
 
