@@ -1,8 +1,10 @@
 import React from 'react'
-import {IconButton, makeStyles} from "@material-ui/core";
+import {CardProps, IconButton, makeStyles} from "@material-ui/core";
 import Moment from "react-moment";
 import KeyboardArrowLeftIcon from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
+import {useDispatch, useSelector} from "react-redux";
+import {fetchSummoners, getPagination, getSummonersHaveLoaded, getSummonersLoading} from "../state/namesSlice";
 
 const useStyles = makeStyles((theme) => ({
     pagination: {
@@ -28,15 +30,35 @@ const useStyles = makeStyles((theme) => ({
     }
 }))
 
-const Pagination = () => {
+interface Props {
+    showWhenLoading?: boolean
+}
+
+const Pagination = ({showWhenLoading}: Props) => {
     const classes = useStyles();
+    const dispatch = useDispatch();
+
+    const loading = useSelector(getSummonersLoading);
+    const loaded = useSelector(getSummonersHaveLoaded);
+    const pagination = useSelector(getPagination);
+
+    const goBackwards = () => {
+        dispatch(fetchSummoners(pagination.backwards, true))
+    }
+
+    const goForwards = () => {
+        dispatch(fetchSummoners(pagination.forwards, false))
+    }
+
+    if (loading && !showWhenLoading) return null;
+
     return (
         <div className={classes.pagination}>
-            <IconButton size='small' className={classes.button}>
+            <IconButton size='small' className={classes.button} onClick={goBackwards} disabled={loading}>
                 <KeyboardArrowLeftIcon />
             </IconButton>
-            <Moment date={new Date()} format='MM/DD/YYYY, hh:mm:ss A' className={classes.time}/>
-            <IconButton size='small' className={classes.button}>
+            <Moment date={new Date(pagination.backwards)} format='MM/DD/YYYY, hh:mm:ss A' className={classes.time}/>
+            <IconButton size='small' className={classes.button} onClick={goForwards} disabled={loading}>
                 <KeyboardArrowRightIcon />
             </IconButton>
         </div>

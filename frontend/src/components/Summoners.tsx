@@ -2,6 +2,7 @@ import React from 'react'
 import {Divider, makeStyles, Typography} from "@material-ui/core";
 import SummonersTable from "./SummonersTable";
 import Filters from "./Filters";
+import Pagination from "./Pagination";
 
 const useStyles = makeStyles((theme) => ({
     title: {
@@ -16,6 +17,9 @@ const useStyles = makeStyles((theme) => ({
         marginTop: theme.spacing(2),
         justifyContent: 'space-between',
         alignItems: 'flex-start'
+    },
+    tableArea: {
+        width: '100%'
     }
 }))
 
@@ -27,7 +31,11 @@ const Summoners = () => {
             <Typography variant='h2' className={classes.title}>League of Legends Names</Typography>
             <Divider />
             <div className={classes.box}>
-                <SummonersTable />
+                <div className={classes.tableArea}>
+                    <Pagination showWhenLoading={true}/>
+                    <SummonersTable />
+                    <Pagination />
+                </div>
                 <Filters />
             </div>
         </>

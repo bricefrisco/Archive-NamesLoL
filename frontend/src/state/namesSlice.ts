@@ -50,11 +50,11 @@ export const namesSlice = createSlice({
             state.summoner = undefined;
         },
         setSummoners: (state, action) => {
-            state.apiSummoners.loaded = false;
+            state.summoners = action.payload;
+            state.apiSummoners.loaded = true;
             state.apiSummoners.loading = false;
             state.apiSummoners.error = false;
             state.apiSummoners.errorMessage = undefined;
-            state.summoners = action.payload;
         },
         summonersLoading: (state) => {
             state.apiSummoners.loaded = false;
@@ -80,6 +80,11 @@ export const getSummoner = (state: any) => state.names.summoner;
 export const getSummoners = (state: any) => state.names.summoners;
 export const getSummonerApiValues = (state:any) => state.names.apiSummoner;
 export const getSummonersApiValues = (state: any) => state.names.apiSummoners;
+export const getPagination = (state: any) => state.names.pagination;
+export const getSummonersHaveLoaded = (state: any) => state.names.apiSummoners.loaded;
+export const getSummonersLoading = (state: any) => state.names.apiSummoners.loading;
+export const getSummonersError = (state: any) => state.names.apiSummoners.error;
+export const getSummonersErrorMessage = (state: any) => state.names.apiSummoners.errorMessage;
 
 export const fetchSummoner = () => (dispatch: any, getState: any) => {
     const name = getState().names.nameInput;
@@ -91,7 +96,7 @@ export const fetchSummoner = () => (dispatch: any, getState: any) => {
         .catch((err) => dispatch(summonerErrored(err)))
 }
 
-export const fetchSummoners =  (timestamp: number, backwards: boolean) => (dispatch: any, getState: any) => {
+export const fetchSummoners = (timestamp: number, backwards: boolean) => (dispatch: any, getState: any) => {
     dispatch(summonersLoading())
 
     fetch(`http://localhost:8080/na/summoners?timestamp=${timestamp}&backwards=${backwards}`)

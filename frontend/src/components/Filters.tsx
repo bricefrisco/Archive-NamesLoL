@@ -1,5 +1,7 @@
 import React from 'react'
 import {Button, Divider, FormControl, InputLabel, makeStyles, MenuItem, Select, Typography} from "@material-ui/core";
+import {useSelector} from "react-redux";
+import {getSummonersHaveLoaded} from "../state/namesSlice";
 
 const useStyles = makeStyles((theme) => ({
     card: {
@@ -29,6 +31,7 @@ const menuItems = ['Any', 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
 
 const Filters = () => {
     const classes = useStyles()
+    const summonersHaveLoaded = useSelector(getSummonersHaveLoaded)
 
     return (
         <div className={classes.card}>
