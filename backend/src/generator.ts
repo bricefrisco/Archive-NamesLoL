@@ -5,7 +5,7 @@ import {Region, updateSummoner} from "./dynamo-db";
 const throttledQueue = require('throttled-queue')
 const fs = require('fs')
 
-const names = fs.readFileSync('./names/usernames1.txt').toString().split('\n')
+const names = fs.readFileSync('./names/usernames2.txt').toString().split('\n')
     .filter((name: string) => name.length > 2);
 const queue = throttledQueue(1, 1300)
 

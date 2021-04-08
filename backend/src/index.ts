@@ -5,6 +5,7 @@ import bodyParser from 'body-parser'
 import {fetchSummoner} from "./riot-api";
 import {DynamoSummonerList, mapRegion, mapSummoner, mapSummoners} from "./mapper";
 import {querySummoners, querySummonersByNameSize, updateSummoner} from "./dynamo-db";
+import {addNamesFromFile} from "./generator";
 
 const cors = require('cors')
 
@@ -20,7 +21,7 @@ const corsOptions = {
 app.use(cors(corsOptions))
 app.use(bodyParser.json())
 
-// addNamesFromFile()
+addNamesFromFile()
 
 app.get('/:region/summoners', (req, res) => {
     const region = mapRegion(req.params.region)

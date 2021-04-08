@@ -90,6 +90,7 @@ export const getSummoners = (state: any) => state.names.summoners;
 export const getSummonerApiValues = (state:any) => state.names.apiSummoner;
 export const getPagination = (state: any) => state.names.pagination;
 export const getSummonersHaveLoaded = (state: any) => state.names.apiSummoners.loaded;
+export const getSummonerLoading = (state: any) => state.names.apiSummoner.loading;
 export const getSummonersLoading = (state: any) => state.names.apiSummoners.loading;
 export const getSummonersError = (state: any) => state.names.apiSummoners.error;
 export const getNameLength = (state: any) => state.names.nameLength;
@@ -113,7 +114,7 @@ export const fetchSummoner = () => (dispatch: any, getState: any) => {
     fetch(`http://localhost:8080/na/summoners/${name}`)
         .then(parseResponse)
         .then((summoner) => dispatch(setSummoner(summoner)))
-        .catch((err) => dispatch(summonerErrored(err)))
+        .catch((err) => dispatch(summonerErrored(err.toString())))
 }
 
 export const fetchSummoners = (timestamp: number, backwards: boolean) => (dispatch: any, getState: any) => {
@@ -128,15 +129,13 @@ export const fetchSummoners = (timestamp: number, backwards: boolean) => (dispat
         url.searchParams.append('nameLength', String(nameLength))
     }
 
-    console.log(url.toString())
-
     fetch(url.toString())
         .then(parseResponse)
         .then((response) => {
             dispatch(setSummoners(response.summoners))
             dispatch(setPage({ forwards: response.forwards, backwards: response.backwards}))
         })
-        .catch((err) => dispatch(summonersErrored(err)))
+        .catch((err) => dispatch(summonersErrored(err.toString())))
 }
 
 export default namesSlice.reducer;

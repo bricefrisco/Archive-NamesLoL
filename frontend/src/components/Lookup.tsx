@@ -16,7 +16,7 @@ const Lookup = () => {
     return (
         <Container>
             <NameInput />
-            {summoner && <Summoner summoner={summoner}/>}
+            <Summoner summoner={summoner}/>
             {summonerApiValues.error && <div>{summonerApiValues.errorMessage}</div>}
             <Summoners />
         </Container>

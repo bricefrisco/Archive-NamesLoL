@@ -1,8 +1,8 @@
 import React from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import {
-    fetchSummoner,
-    getNameInput,
+    fetchSummoner, getLimit,
+    getNameInput, getSummonerLoading, setLimit,
     setName,
 } from "../state/namesSlice";
 import {IconButton, InputAdornment, makeStyles, TextField} from "@material-ui/core";
@@ -20,15 +20,19 @@ const NameInput = () => {
     const dispatch = useDispatch()
     const classes = useStyles()
     const summonerName = useSelector(getNameInput);
+    const loading = useSelector(getSummonerLoading);
+    const limit = useSelector(getLimit);
+
+    const click = () => {
+        dispatch(setLimit(true))
+        setTimeout(() => dispatch(setLimit(false)), 1300)
+        dispatch(fetchSummoner())
+    }
 
     const keypress = (e: any) => {
         if (e.keyCode === 13) {
-            dispatch(fetchSummoner())
+            click()
         }
-    }
-
-    const click = (e: any) => {
-        dispatch(fetchSummoner())
     }
 
     return (
@@ -54,6 +58,7 @@ const NameInput = () => {
 
                 }}
                 onChange={(e) => dispatch(setName(e.target.value))}
+                disabled={loading || limit}
             />
     )
 };

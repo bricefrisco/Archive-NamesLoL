@@ -1,7 +1,8 @@
 import React from 'react'
-import {makeStyles, Typography} from "@material-ui/core";
+import {LinearProgress, makeStyles, Typography} from "@material-ui/core";
 import Moment from "react-moment";
-import moment from "moment";
+import {getSummoner, getSummonerLoading} from "../state/namesSlice";
+import {useSelector} from "react-redux";
 
 interface Summoner {
     id: string,
@@ -52,14 +53,30 @@ const useStyles = makeStyles((theme) => ({
     label: {
         marginBottom: theme.spacing(0.3),
         fontWeight: 500
+    },
+    disclosure: {
+        display: 'flex',
+        justifyContent: 'flex-end',
+        fontSize: 12,
+        color: 'grey'
+    },
+    loading: {
+        marginTop: theme.spacing(2)
     }
 }))
 
 const Summoner = ({summoner}: Props) => {
     const classes = useStyles();
+    const loading = useSelector(getSummonerLoading);
+
+    if (loading) {
+        return <LinearProgress className={classes.loading}/>
+    }
+
+    if (!summoner) return null;
 
     const infoAvailable = summoner.availabilityDate !== undefined;
-    const nameAvailable = !infoAvailable || (new Date(summoner.availabilityDate) <= new Date())
+    const nameAvailable = !infoAvailable || (new Date(summoner.availabilityDate) <= new Date());
 
     const getClassName = () => {
         if (nameAvailable) {
@@ -70,29 +87,36 @@ const Summoner = ({summoner}: Props) => {
     }
 
     return (
-        <div className={getClassName()}>
-            <Typography variant='h3' className={classes.name}>{summoner.name}</Typography>
-            <div className={classes.status}>
-                <div className={classes.label}>Status</div>
-                <div>{nameAvailable ? 'Available*' : 'Unavailable'}</div>
+        <>
+            <div className={getClassName()}>
+                <Typography variant='h3' className={classes.name}>{summoner.name}</Typography>
+                <div className={classes.status}>
+                    <div className={classes.label}>Status</div>
+                    <div>{nameAvailable ? 'Available*' : 'Unavailable'}</div>
+                </div>
+                {infoAvailable && (
+                    <>
+                        <div className={classes.status}>
+                            <div className={classes.label}>Availability Date</div>
+                            <Moment date={new Date(summoner.availabilityDate)} format='MM/DD/YYYY hh:mm A'/>
+                        </div>
+                        <div className={classes.status}>
+                            <div className={classes.label}>Last Activity</div>
+                            <Moment date={new Date(summoner.revisionDate)} format='MM/DD/YYYY'/>
+                        </div>
+                        <div className={classes.status}>
+                            <div className={classes.label}>Level</div>
+                            <div>{summoner.level}</div>
+                        </div>
+                    </>
+                )}
             </div>
-            {infoAvailable && (
-                <>
-                    <div className={classes.status}>
-                        <div className={classes.label}>Availability Date</div>
-                        <Moment date={new Date(summoner.availabilityDate)} format='MM/DD/YYYY hh:mm A'/>
-                    </div>
-                    <div className={classes.status}>
-                        <div className={classes.label}>Last Activity</div>
-                        <Moment date={new Date(summoner.revisionDate)} format='MM/DD/YYYY'/>
-                    </div>
-                    <div className={classes.status}>
-                        <div className={classes.label}>Level</div>
-                        <div>{summoner.level}</div>
-                    </div>
-                </>
+            {nameAvailable && (
+                <Typography className={classes.disclosure}>
+                    *If the name is not blocked by Riot Games
+                </Typography>
             )}
-        </div>
+        </>
     )
 }
 
