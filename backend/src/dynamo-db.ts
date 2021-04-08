@@ -23,7 +23,8 @@ export interface SummonerEntity {
     accountId: string,
     revisionDate: number,
     availabilityDate: number
-    level: number
+    level: number,
+    lastUpdated: number
 }
 
 AWS.config.update({
@@ -62,7 +63,7 @@ export const querySummonersByNameSize = (region: Region, timestamp: number, back
                 ':nameLength': region.toUpperCase() + '#' + nameSize,
                 ':timestamp': timestamp
             },
-            KeyConditionExpression: backwards ? 'nl = :nameLength and ad <= :timestamp' : 'nl = :nameLength and ad >= timestamp',
+            KeyConditionExpression: backwards ? 'nl = :nameLength and ad <= :timestamp' : 'nl = :nameLength and ad >= :timestamp',
             IndexName: 'name-length-availability-date-index',
             ScanIndexForward: !backwards
         }, (err, data) => {
@@ -84,9 +85,10 @@ export const updateSummoner = (summoner: SummonerEntity): void => {
             ':aid': summoner.accountId,
             ':rd': summoner.revisionDate,
             ':l': summoner.level,
-            ':nl': summoner.region.toUpperCase() + '#' + summoner.name.length
+            ':nl': summoner.region.toUpperCase() + '#' + summoner.name.length,
+            ':ld': summoner.lastUpdated
         },
-        UpdateExpression: 'set r = :r, aid = :aid, rd = :rd, l = :l, nl = :nl'
+        UpdateExpression: 'set r = :r, aid = :aid, rd = :rd, l = :l, nl = :nl, ld = :ld'
     }, (err, data) => {
         if (err) console.log(err)
         else console.log('Successfully updated summoner in DynamoDB:', summoner.region.toUpperCase() + '#' + summoner.name.toUpperCase())

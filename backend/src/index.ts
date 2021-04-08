@@ -40,6 +40,7 @@ app.get('/:region/summoners', (req, res) => {
                 console.log(err)
                 res.status(500).json(err.message)
             })
+        return;
     }
 
     querySummoners(region, timestamp, backwards)

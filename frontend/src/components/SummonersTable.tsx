@@ -1,6 +1,11 @@
 import React, {useEffect} from 'react'
 import {useDispatch, useSelector} from "react-redux";
-import {fetchSummoners, getSummoners, getSummonersApiValues, getSummonersLoading} from "../state/namesSlice";
+import {
+    fetchSummoners, getNameLength,
+    getSummoners,
+    getSummonersHaveLoaded,
+    getSummonersLoading
+} from "../state/namesSlice";
 import {
     LinearProgress,
     makeStyles,
@@ -13,8 +18,8 @@ import {
     TableRow
 } from "@material-ui/core";
 import Moment from "react-moment";
-import Pagination from "./Pagination";
 import moment from "moment";
+import UpdateButton from "./UpdateButton";
 
 interface Summoner {
     region: string,
@@ -22,7 +27,8 @@ interface Summoner {
     revisionDate: number,
     level: number,
     availabilityDate: number,
-    name: string
+    name: string,
+    lastUpdated: number
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -37,17 +43,21 @@ const SummonersTable = () => {
     const classes = useStyles();
     const dispatch = useDispatch();
     const loading = useSelector(getSummonersLoading)
+    const loaded = useSelector(getSummonersHaveLoaded)
     const summoners = useSelector(getSummoners)
+    const nameLength = useSelector(getNameLength)
 
     useEffect(() => {
         dispatch(fetchSummoners(new Date().valueOf(), false))
-    }, [])
+    }, [nameLength])
 
     if (loading) return (
         <div className={classes.table}>
             <LinearProgress />
         </div>
     )
+
+    if (!loaded) return null;
 
     return (
         <TableContainer component={Paper} className={classes.table}>
@@ -58,6 +68,8 @@ const SummonersTable = () => {
                         <TableCell align='center'>Availability Date</TableCell>
                         <TableCell align='left'>Name Available</TableCell>
                         <TableCell align='right'>Level</TableCell>
+                        <TableCell align='left'>Last Updated</TableCell>
+                        <TableCell align='right'>Update</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -67,13 +79,15 @@ const SummonersTable = () => {
                             <TableCell align='center'>
                                 <Moment date={new Date(summoner.availabilityDate)}
                                         format='MM/DD/YYYY hh:mm A'/>
-                                {/*{` (${moment(summoner.availabilityDate).fromNow()})`}*/}
                             </TableCell>
                             <TableCell align='left'>
-                                {/*<Moment date={new Date(summoner.revisionDate)} format='MM/DD/YYYY' />*/}
                                 {moment(summoner.availabilityDate).fromNow()}
                             </TableCell>
                             <TableCell align='right'>{summoner.level}</TableCell>
+                            <TableCell align='left'>{summoner.lastUpdated ? moment(summoner.lastUpdated).fromNow() : 'Never'}</TableCell>
+                            <TableCell align='right'>
+                                <UpdateButton summonerName={summoner.name} />
+                            </TableCell>
                         </TableRow>
                     ))}
                 </TableBody>

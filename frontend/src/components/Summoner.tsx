@@ -1,6 +1,7 @@
 import React from 'react'
 import {makeStyles, Typography} from "@material-ui/core";
 import Moment from "react-moment";
+import moment from "moment";
 
 interface Summoner {
     id: string,
@@ -12,7 +13,8 @@ interface Summoner {
     summonerLevel: number,
     region: string,
     level: number,
-    availabilityDate: number
+    availabilityDate: number,
+    lastUpdated: number
 }
 
 interface Props {
@@ -77,12 +79,12 @@ const Summoner = ({summoner}: Props) => {
             {infoAvailable && (
                 <>
                     <div className={classes.status}>
-                        <div className={classes.label}>Last Activity</div>
-                        <Moment date={new Date(summoner.revisionDate)} format='MM/DD/YYYY hh:mm A'/>
+                        <div className={classes.label}>Availability Date</div>
+                        <Moment date={new Date(summoner.availabilityDate)} format='MM/DD/YYYY hh:mm A'/>
                     </div>
                     <div className={classes.status}>
-                        <div className={classes.label}>Name Available</div>
-                        <Moment date={new Date(summoner.availabilityDate)} format='MM/DD/YYYY hh:mm A'/>
+                        <div className={classes.label}>Last Activity</div>
+                        <Moment date={new Date(summoner.revisionDate)} format='MM/DD/YYYY'/>
                     </div>
                     <div className={classes.status}>
                         <div className={classes.label}>Level</div>
