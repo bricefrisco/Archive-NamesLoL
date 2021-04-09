@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react'
 import {useDispatch, useSelector} from "react-redux";
 import {
-    fetchSummoners, getNameLength,
+    fetchSummoners, getNameLength, getRegion,
     getSummoners,
     getSummonersHaveLoaded,
     getSummonersLoading
@@ -46,10 +46,11 @@ const SummonersTable = () => {
     const loaded = useSelector(getSummonersHaveLoaded)
     const summoners = useSelector(getSummoners)
     const nameLength = useSelector(getNameLength)
+    const region = useSelector(getRegion)
 
     useEffect(() => {
         dispatch(fetchSummoners(new Date().valueOf(), false))
-    }, [nameLength])
+    }, [nameLength, region])
 
     if (loading) return (
         <div className={classes.table}>

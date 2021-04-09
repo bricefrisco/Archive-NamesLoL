@@ -38,21 +38,9 @@ const UpdateButton = ({summonerName}: Props) => {
             .catch((err) => setError(err))
     }
 
-    if (loading) {
-        return (
-            <CircularProgress size={24}/>
-        )
-    }
-
-    if (success) {
-        return (
-            <CheckIcon/>
-        )
-    }
-
-    if (error) {
-        return <ErrorIcon/>
-    }
+    if (loading) return <CircularProgress size={24}/>
+    if (success) return <CheckIcon/>
+    if (error) return <ErrorIcon/>
 
     return (
         <IconButton size='small' onClick={click} disabled={limit}>

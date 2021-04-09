@@ -78,9 +78,9 @@ export const updateSummoner = (summoner: SummonerEntity): void => {
         TableName: 'lol-summoners',
         Key: {
             n: summoner.region.toUpperCase() + '#' + summoner.name.toUpperCase(),
-            ad: summoner.availabilityDate
         },
         ExpressionAttributeValues: {
+            ':ad': summoner.availabilityDate,
             ':r': summoner.region.toUpperCase(),
             ':aid': summoner.accountId,
             ':rd': summoner.revisionDate,
@@ -88,7 +88,7 @@ export const updateSummoner = (summoner: SummonerEntity): void => {
             ':nl': summoner.region.toUpperCase() + '#' + summoner.name.length,
             ':ld': summoner.lastUpdated
         },
-        UpdateExpression: 'set r = :r, aid = :aid, rd = :rd, l = :l, nl = :nl, ld = :ld'
+        UpdateExpression: 'set ad = :ad, r = :r, aid = :aid, rd = :rd, l = :l, nl = :nl, ld = :ld'
     }, (err, data) => {
         if (err) console.log(err)
         else console.log('Successfully updated summoner in DynamoDB:', summoner.region.toUpperCase() + '#' + summoner.name.toUpperCase())

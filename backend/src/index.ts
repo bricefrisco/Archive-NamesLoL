@@ -60,7 +60,12 @@ app.get('/:region/summoners/:name', (req, res) => {
         return
     }
 
-    fetchSummoner(req.params.name)
+    if (!req.params.name) {
+        res.status(400).json('Name cannot be null or blank.')
+        return
+    }
+
+    fetchSummoner(req.params.name, region)
         .then((summoner) => mapSummoner(summoner, region))
         .then((summoner) => {
             res.json(summoner);

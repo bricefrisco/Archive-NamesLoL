@@ -1,8 +1,10 @@
 import React from 'react'
-import {LinearProgress, makeStyles, Typography} from "@material-ui/core";
+import {IconButton, LinearProgress, makeStyles, Typography} from "@material-ui/core";
 import Moment from "react-moment";
 import {getSummoner, getSummonerLoading} from "../state/namesSlice";
 import {useSelector} from "react-redux";
+import {Close} from "@material-ui/icons";
+import {Alert} from "@material-ui/lab";
 
 interface Summoner {
     id: string,

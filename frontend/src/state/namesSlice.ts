@@ -2,10 +2,25 @@ import { createSlice } from '@reduxjs/toolkit'
 import {parseResponse} from "../utils/api";
 import Summoner from "../components/Summoner";
 
+export enum Region {
+    NA = 'na',
+    BR = 'br',
+    EUNE = 'eune',
+    EUW = 'euw',
+    JP = 'jp',
+    KR = 'kr',
+    LAN = 'lan',
+    LAS = 'las',
+    OCE = 'oce',
+    TR = 'tr',
+    RU = 'ru'
+}
+
 export const namesSlice = createSlice({
     name: 'names',
     initialState: {
         nameInput: '',
+        region: Region.NA,
         nameLength: undefined,
         summoner: undefined,
         summoners: undefined,
@@ -32,6 +47,9 @@ export const namesSlice = createSlice({
         },
         setNameLength: (state, action) => {
             state.nameLength = action.payload;
+        },
+        setRegion: (state, action) => {
+            state.region = action.payload;
         },
         setPage: (state, action) => {
             state.pagination.backwards = action.payload.backwards;
@@ -82,7 +100,7 @@ export const namesSlice = createSlice({
     }
 })
 
-export const { setName, setPage, setSummoner, summonerLoading, summonerErrored, setSummoners, summonersLoading, summonersErrored, setNameLength, setLimit} = namesSlice.actions;
+export const { setName, setRegion, setPage, setSummoner, summonerLoading, summonerErrored, setSummoners, summonersLoading, summonersErrored, setNameLength, setLimit} = namesSlice.actions;
 
 export const getNameInput = (state: any) => state.names.nameInput;
 export const getSummoner = (state: any) => state.names.summoner;
@@ -95,6 +113,7 @@ export const getSummonersLoading = (state: any) => state.names.apiSummoners.load
 export const getSummonersError = (state: any) => state.names.apiSummoners.error;
 export const getNameLength = (state: any) => state.names.nameLength;
 export const getLimit = (state: any) => state.names.limit;
+export const getRegion = (state: any) => state.names.region;
 
 export const updateSummoner = (summoner: Summoner) => (dispatch: any, getState: any) => {
     const summoners = getState().names.summoners;
@@ -109,9 +128,12 @@ export const updateSummoner = (summoner: Summoner) => (dispatch: any, getState: 
 
 export const fetchSummoner = () => (dispatch: any, getState: any) => {
     const name = getState().names.nameInput;
+    const region = getState().names.region;
+
+    console.log('region: ' + region)
 
     dispatch(summonerLoading())
-    fetch(`http://localhost:8080/na/summoners/${name}`)
+    fetch(`http://localhost:8080/${region}/summoners/${name}`)
         .then(parseResponse)
         .then((summoner) => dispatch(setSummoner(summoner)))
         .catch((err) => dispatch(summonerErrored(err.toString())))
@@ -121,8 +143,9 @@ export const fetchSummoners = (timestamp: number, backwards: boolean) => (dispat
     dispatch(summonersLoading())
 
     const nameLength = getState().names.nameLength;
+    const region = getState().names.region;
 
-    const url = new URL('http://localhost:8080/na/summoners')
+    const url = new URL(`http://localhost:8080/${region}/summoners`)
     url.searchParams.append('timestamp', String(timestamp))
     url.searchParams.append('backwards', String(backwards))
     if (nameLength && nameLength !== 'Any') {
