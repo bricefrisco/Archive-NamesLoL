@@ -2,7 +2,7 @@ import React from 'react'
 import ReplayIcon from "@material-ui/icons/Replay";
 import {CircularProgress, IconButton} from "@material-ui/core";
 import {parseResponse} from "../utils/api";
-import {getLimit, setLimit, updateSummoner} from "../state/namesSlice";
+import {getLimit, getRegion, setLimit, updateSummoner} from "../state/namesSlice";
 import {useDispatch, useSelector} from "react-redux";
 import CheckIcon from '@material-ui/icons/Check';
 import ErrorIcon from '@material-ui/icons/Error';
@@ -14,6 +14,7 @@ interface Props {
 const UpdateButton = ({summonerName}: Props) => {
     const dispatch = useDispatch();
     const limit = useSelector(getLimit);
+    const region = useSelector(getRegion);
 
     const [loading, setLoading] = React.useState(false);
     const [success, setSuccess] = React.useState(false);
@@ -27,7 +28,7 @@ const UpdateButton = ({summonerName}: Props) => {
         setLoading(true)
         setSuccess(false)
 
-        fetch(`http://localhost:8080/na/summoners/${summonerName}`)
+        fetch(`http://localhost:8080/${region}/summoners/${summonerName}`)
             .then(parseResponse)
             .then((summoner) => {
                 dispatch(updateSummoner(summoner))

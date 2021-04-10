@@ -1,14 +1,14 @@
-import React from 'react';
+import React from "react";
 
-import Lookup from './components/Lookup'
+import Lookup from "./components/Lookup";
 import Navigation from "./components/Navigation";
 
 function App() {
   return (
-      <>
-        <Navigation />
-        <Lookup />
-      </>
+    <>
+      <Navigation />
+      <Lookup />
+    </>
   );
 }
 
