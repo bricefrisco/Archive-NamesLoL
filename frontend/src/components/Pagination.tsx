@@ -7,8 +7,8 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   fetchSummoners,
   getPagination,
-  getSummonersLoading,
-} from "../state/namesSlice";
+  getLoading,
+} from "../state/summonersSlice";
 
 const useStyles = makeStyles((theme) => ({
   pagination: {
@@ -42,7 +42,7 @@ const Pagination = ({ showWhenLoading }: Props) => {
   const classes = useStyles();
   const dispatch = useDispatch();
 
-  const loading = useSelector(getSummonersLoading);
+  const loading = useSelector(getLoading);
   const pagination = useSelector(getPagination);
 
   const goBackwards = () => {

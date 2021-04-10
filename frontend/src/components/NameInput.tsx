@@ -1,16 +1,15 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { fetchSummoner, getLoading } from "../state/summonerSlice";
 import {
-  fetchSummoner,
   getLimit,
   getNameInput,
   getRegion,
-  getSummonerLoading,
-  Region,
   setLimit,
   setName,
   setRegion,
-} from "../state/namesSlice";
+  Region,
+} from "../state/settingsSlice";
 import {
   FormControl,
   IconButton,
@@ -52,7 +51,7 @@ const NameInput = () => {
   const dispatch = useDispatch();
   const classes = useStyles();
   const summonerName = useSelector(getNameInput);
-  const loading = useSelector(getSummonerLoading);
+  const loading = useSelector(getLoading);
   const limit = useSelector(getLimit);
   const region = useSelector(getRegion);
 

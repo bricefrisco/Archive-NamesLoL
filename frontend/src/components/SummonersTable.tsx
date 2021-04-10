@@ -2,12 +2,11 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchSummoners,
-  getNameLength,
-  getRegion,
   getSummoners,
-  getSummonersHaveLoaded,
-  getSummonersLoading,
-} from "../state/namesSlice";
+  getLoaded,
+  getLoading,
+} from "../state/summonersSlice";
+import { getNameLength, getRegion } from "../state/settingsSlice";
 import {
   LinearProgress,
   makeStyles,
@@ -44,8 +43,8 @@ const useStyles = makeStyles((theme) => ({
 const SummonersTable = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const loading = useSelector(getSummonersLoading);
-  const loaded = useSelector(getSummonersHaveLoaded);
+  const loading = useSelector(getLoading);
+  const loaded = useSelector(getLoaded);
   const summoners = useSelector(getSummoners);
   const nameLength = useSelector(getNameLength);
   const region = useSelector(getRegion);

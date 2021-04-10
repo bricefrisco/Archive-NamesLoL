@@ -1,8 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
-import namesReducer from './namesSlice'
+import settingsReducer from "./settingsSlice";
+import summonerReducer from "./summonerSlice";
+import summonersReducer from "./summonersSlice";
 
 export default configureStore({
-    reducer: {
-        names: namesReducer
-    }
+  reducer: {
+    settings: settingsReducer,
+    summoner: summonerReducer,
+    summoners: summonersReducer,
+  },
 });

@@ -1,7 +1,7 @@
 import React from "react";
 import { LinearProgress, makeStyles, Typography } from "@material-ui/core";
 import Moment from "react-moment";
-import { getSummonerLoading } from "../state/namesSlice";
+import { getLoading } from "../state/summonerSlice";
 import { useSelector } from "react-redux";
 
 export interface SummonerData {
@@ -67,7 +67,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Summoner = ({ summoner }: Props) => {
   const classes = useStyles();
-  const loading = useSelector(getSummonerLoading);
+  const loading = useSelector(getLoading);
 
   if (loading) {
     return <LinearProgress className={classes.loading} />;
