@@ -27,7 +27,7 @@ const port = process.env.PORT || 8080; // Use port specified in environment vari
 const auth = require('./auth-for-beta')
 
 const corsOptions = {
-  origin: "http://localhost:3000", // Allow requests from localhost origin
+  origin: ["http://localhost:3000", "https://beta.nameslol.com", "https://nameslol.com"],
   optionsSuccessStatus: 200,
 };
 
