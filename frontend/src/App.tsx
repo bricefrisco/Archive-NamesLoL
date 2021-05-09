@@ -1,14 +1,28 @@
 import React from "react";
-
-import Lookup from "./components/Lookup";
+import {
+    BrowserRouter as Router,
+    Switch,
+    Route,
+} from "react-router-dom";
+import NamesLoL from "./components/NamesLoL";
 import Navigation from "./components/Navigation";
+import BetaAuth from "./components/BetaAuth";
 
 function App() {
   return (
-    <>
-      <Navigation />
-      <Lookup />
-    </>
+    <Router>
+        <Switch>
+            <Route exact path='/search'>
+                <>
+                    <Navigation />
+                    <NamesLoL />
+                </>
+            </Route>
+            <Route path='/'>
+                <BetaAuth />
+            </Route>
+        </Switch>
+    </Router>
   );
 }
 

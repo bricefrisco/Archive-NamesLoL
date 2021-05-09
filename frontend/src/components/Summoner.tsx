@@ -1,8 +1,18 @@
 import React from "react";
-import { LinearProgress, makeStyles, Typography } from "@material-ui/core";
+import {Collapse, IconButton, LinearProgress, makeStyles, Typography} from "@material-ui/core";
 import Moment from "react-moment";
-import { getLoading } from "../state/summonerSlice";
-import { useSelector } from "react-redux";
+import {
+  getLoading,
+  getOpen,
+  close,
+  getSummoner,
+  getError,
+  getErrorMessage,
+  fetchSummoner
+} from "../state/summonerSlice";
+import {useDispatch, useSelector} from "react-redux";
+import {Close} from "@material-ui/icons";
+import {Alert} from "@material-ui/lab";
 
 export interface SummonerData {
   id: string;
@@ -16,10 +26,6 @@ export interface SummonerData {
   level: number;
   availabilityDate: number;
   lastUpdated: number;
-}
-
-interface Props {
-  summoner: SummonerData;
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -63,14 +69,50 @@ const useStyles = makeStyles((theme) => ({
   loading: {
     marginTop: theme.spacing(2),
   },
+  close: {
+    '&::before': {
+
+    },
+    '&::after': {
+      content: '',
+      flex: '1 0 auto'
+    }
+  },
+  alert: {
+    marginTop: theme.spacing(2)
+  },
+  link: {
+    color: '#0d6efd',
+    textDecoration: 'none',
+    '&:hover': {
+      textDecoration: 'underline',
+      cursor: 'pointer'
+    }
+  },
 }));
 
-const Summoner = ({ summoner }: Props) => {
+const Summoner = () => {
   const classes = useStyles();
+  const dispatch = useDispatch();
   const loading = useSelector(getLoading);
+  const open = useSelector(getOpen);
+  const summoner = useSelector(getSummoner);
+  const error = useSelector(getError);
+  const errorMessage = useSelector(getErrorMessage);
 
   if (loading) {
     return <LinearProgress className={classes.loading} />;
+  }
+
+  if (error) {
+    return (
+        <Alert severity='error' className={classes.alert}>
+          Oh no! An error occurred: '{errorMessage}'<br />
+          Please <span className={classes.link} onClick={() => dispatch(fetchSummoner())}>try again.</span>{' '}
+          If the issue persists, please let us know{' '}
+          <a className={classes.link} target='_blank' rel='noreferrer noopener' href='https://github.com/bricefrisco/LoLNames/issues/new'>here.</a>
+        </Alert>
+    )
   }
 
   if (!summoner) return null;
@@ -88,7 +130,7 @@ const Summoner = ({ summoner }: Props) => {
   };
 
   return (
-    <>
+    <Collapse in={open}>
       <div className={getClassName()}>
         <Typography variant="h3" className={classes.name}>
           {summoner.name}
@@ -119,13 +161,16 @@ const Summoner = ({ summoner }: Props) => {
             </div>
           </>
         )}
+        <IconButton size='small' onClick={() => dispatch(close())}>
+          <Close />
+        </IconButton>
       </div>
       {nameAvailable && (
         <Typography className={classes.disclosure}>
           *If the name is not blocked by Riot Games
         </Typography>
       )}
-    </>
+    </Collapse>
   );
 };
 

@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
     },
     tableArea: {
         width: '100%'
-    }
+    },
 }))
 
 const Summoners = () => {
@@ -32,7 +32,7 @@ const Summoners = () => {
             <Divider />
             <div className={classes.box}>
                 <div className={classes.tableArea}>
-                    <Pagination showWhenLoading={true}/>
+                    <Pagination showWhenLoading={false}/>
                     <SummonersTable />
                     <Pagination />
                 </div>

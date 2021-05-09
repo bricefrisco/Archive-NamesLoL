@@ -1,68 +1,88 @@
-import {fetchSummoner} from "./riot-api";
+import {fetchSummoner, SummonerDTO} from "./riot-api";
 import {mapSummoner} from "./mapper";
-import {Region, updateSummoner} from "./dynamo-db";
+import {deleteSummoner, querySummoner, Region, updateSummoner} from "./dynamo-db";
+import {formatName, formatStatus} from "./utils";
 
-const throttledQueue = require('throttled-queue')
-const fs = require('fs')
+const throttledQueue = require("throttled-queue");
+const fs = require("fs");
 
-const letters = /^[A-Za-z]+$/;
+const THROTTLE: number = 1300;
 
-const names = fs.readFileSync('./names/english-names.txt').toString().split('\n')
-    // .filter((name: string) => name.length === 5)
-    .filter((name: string) => name.match(letters))
-    .sort((x: string, y: string) => {
-        if (x < y) return -1;
-        if (y > x) return 1;
-        return 0;
-    })
+// const names = fs
+//     .readFileSync("./names/summoners.txt")
+//     .toString()
+//     .split("\n")
+//     .filter((name: string) => name.length === 5);
 
-console.log('names length:', names.length)
+const queues: Map<Region, any> = new Map<Region, any>();
 
-const naQueue = throttledQueue(1, 433)
-const euwQueue = throttledQueue(1, 433)
-const krQueue = throttledQueue(1, 433)
-const euneQueue = throttledQueue(1, 433)
-const brQueue = throttledQueue(1, 433)
-const lanQueue = throttledQueue(1, 433)
-const lasQueue = throttledQueue(1, 433)
-const trQueue = throttledQueue(1, 433)
+Object.keys(Region).forEach((region: Region) => {
+    queues.set(region, throttledQueue(1, THROTTLE));
+});
 
-const fetchAndUpdateSummoner = (name: string, region: Region, token: string, idx?: number, total?: number) => {
+export const updateOrDeleteSummoner = (name: string, region: Region, token: string) => {
+    fetchSummoner(name, region, token)
+        .then((summoner) => mapSummoner(summoner, region))
+        .then((summoner) => {
+            if (summoner.name.toUpperCase() !== name.toUpperCase()) {
+                deleteSummoner(name, region).then(() => {
+                    console.log(formatName(name, region) + formatStatus(`Removed - name mismatch. Previous: '${name.toUpperCase()}', current: '${summoner.name.toUpperCase()}'`))
+                }).catch((err) => {
+                    console.log('Error occurred while deleting summoner - ' + err);
+                })
+            }
+            return summoner;
+        })
+        .then(updateSummoner)
+        .catch((err) => {
+            if (err.message.includes('summoner not found')) {
+                console.log(formatName(name, region) + formatStatus('Not found'))
+            } else {
+                console.log('Error occurred - ' + err.message);
+            }
+        });
+}
+
+export const fetchAndUpdateSummoner = (name: string, region: Region, token: string) => {
     fetchSummoner(name, region, token)
         .then((summoner) => mapSummoner(summoner, region))
         .then(updateSummoner)
-        .then(() => {
-            if (idx) {
-                console.log(`[${idx}/${total}] - ${region.toUpperCase()}#${name.toUpperCase()}`)
-            }
-        })
         .catch((err) => {
-            if (err.message.includes('summoner not found')) {
-                console.log(`Summoner not found: ${region.toUpperCase()}#${name.toUpperCase()}`)
+            if (err.message.includes("summoner not found")) {
+                console.log(formatName(name, region) + formatStatus("Not found"));
             } else {
-                console.log('Error occurred - ' + err.message)
+                console.log("Error occurred - " + err.message);
             }
+        });
+};
+
+const summonerAlreadyExists = (name: string, region: Region, idx?: number, total?: number) => {
+    if (region.toUpperCase() === "NA") { // Only log this for NA region.
+        const progress = ("[" + idx + "/" + total + "]").padEnd(24);
+        console.log(progress + region.toUpperCase() + "#" + name.toUpperCase());
+    }
+
+    return querySummoner(region, name)
+        .then((res: any) => {
+            return res.Items && res.Items.length > 0;
         })
-}
+        .catch((err) =>
+            console.log("Error occurred while querying DynamoDB:", err.toString())
+        );
+};
 
-export const addNamesFromFile = () => {
-    const total = names.length;
-    names.forEach((name: string, idx: number) => {
-        if (idx < 902) return;
+export const addSummonerIfNotExists = (name: string, region: Region, token: string, idx?: number, total?: number) => {
+    summonerAlreadyExists(name, region, idx, total).then((alreadyExists) => {
+        if (!alreadyExists) fetchAndUpdateSummoner(name, region, token);
+        else console.log(formatName(name, region) + formatStatus("Already exists"));
+    });
+};
 
-        let token: string;
-        if (idx % 3 === 0) token = process.env.RIOT_API_TOKEN;
-        if (idx % 3 === 1) token = process.env.RIOT_API_TOKEN_2;
-        if (idx % 3 === 2) token = process.env.RIOT_API_TOKEN_3;
-
-        naQueue(() => fetchAndUpdateSummoner(name, Region.NA, token, idx, total))
-        euwQueue(() => fetchAndUpdateSummoner(name, Region.EUW, token))
-        krQueue(() => fetchAndUpdateSummoner(name, Region.KR, token))
-        euneQueue(() => fetchAndUpdateSummoner(name, Region.EUNE, token))
-        brQueue(() => fetchAndUpdateSummoner(name, Region.BR, token))
-        lanQueue(() => fetchAndUpdateSummoner(name, Region.LAN, token))
-        lasQueue(() => fetchAndUpdateSummoner(name, Region.LAS, token))
-        trQueue(() => fetchAndUpdateSummoner(name, Region.TR, token))
-    })
-}
-
+// export const addNamesFromFile = () => {
+//     const total = names.length;
+//     names.forEach((name: string, idx: number) => {
+//         Object.keys(Region).forEach((region: Region) => {
+//             queues.get(region)(() => addSummonerIfNotExists(name, region, process.env.RIOT_API_TOKEN, idx, total));
+//         });
+//     });
+// };

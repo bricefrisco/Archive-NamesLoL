@@ -1,10 +1,9 @@
-export const parseResponse = (res: Response) => {
-  if (!res.ok) {
-    res.text().then((err) => {
-      console.log(err);
-      throw new Error(err);
-    });
-  } else {
-    return res.json();
-  }
+export const parseResponse = (response: Response) => {
+  return new Promise((res, rej) => {
+    if (!response.ok) {
+      response.text().then((err) => rej(err));
+    } else {
+      response.json().then(res)
+    }
+  })
 };

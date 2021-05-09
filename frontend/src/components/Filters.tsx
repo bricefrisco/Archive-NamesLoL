@@ -9,7 +9,7 @@ import {
   Select,
   Typography,
 } from "@material-ui/core";
-import { useDispatch } from "react-redux";
+import {useDispatch} from "react-redux";
 import { setNameLength } from "../state/settingsSlice";
 
 const useStyles = makeStyles((theme) => ({

@@ -4,7 +4,7 @@ import {
   fetchSummoners,
   getSummoners,
   getLoaded,
-  getLoading,
+  getLoading, getError, getErrorMessage,
 } from "../state/summonersSlice";
 import { getNameLength, getRegion } from "../state/settingsSlice";
 import {
@@ -21,6 +21,7 @@ import {
 import Moment from "react-moment";
 import moment from "moment";
 import UpdateButton from "./UpdateButton";
+import {Alert} from "@material-ui/lab";
 
 interface Summoner {
   region: string;
@@ -38,6 +39,20 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: 900,
     marginBottom: theme.spacing(2),
   },
+  semiGray: {
+    color: 'rgba(0, 0, 0, 0.75)'
+  },
+  link: {
+    color: '#0d6efd',
+    textDecoration: 'none',
+    '&:hover': {
+      textDecoration: 'underline',
+      cursor: 'pointer'
+    }
+  },
+  alert: {
+    margin: theme.spacing(3)
+  }
 }));
 
 const SummonersTable = () => {
@@ -45,6 +60,8 @@ const SummonersTable = () => {
   const dispatch = useDispatch();
   const loading = useSelector(getLoading);
   const loaded = useSelector(getLoaded);
+  const error = useSelector(getError);
+  const errorMessage = useSelector(getErrorMessage);
   const summoners = useSelector(getSummoners);
   const nameLength = useSelector(getNameLength);
   const region = useSelector(getRegion);
@@ -60,7 +77,19 @@ const SummonersTable = () => {
       </div>
     );
 
+  if (error) {
+    return (
+        <Alert severity='error' className={classes.alert}>
+          Oh no! An error occurred: '{errorMessage}'<br />
+          Please <span className={classes.link} onClick={() => dispatch(fetchSummoners(new Date().valueOf(), false))}>try again.</span>{' '}
+          If the issue persists, please let us know{' '}
+          <a className={classes.link} target='_blank' rel='noreferrer noopener' href='https://github.com/bricefrisco/LoLNames/issues/new'>here.</a>
+        </Alert>
+    )
+  }
+
   if (!loaded) return null;
+
 
   return (
     <TableContainer component={Paper} className={classes.table}>
@@ -68,27 +97,27 @@ const SummonersTable = () => {
         <TableHead>
           <TableRow>
             <TableCell align="left">Name</TableCell>
-            <TableCell align="center">Availability Date</TableCell>
             <TableCell align="left">Name Available</TableCell>
+            <TableCell align="center">Availability Date</TableCell>
             <TableCell align="right">Level</TableCell>
             <TableCell align="left">Last Updated</TableCell>
             <TableCell align="right">Update</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {summoners.map((summoner: Summoner) => (
-            <TableRow key={summoner.accountId}>
+          {summoners.map((summoner: Summoner, idx: number) => (
+            <TableRow key={idx}>
               <TableCell align="left">{summoner.name}</TableCell>
-              <TableCell align="center">
+              <TableCell align="left">
+                {moment(summoner.availabilityDate).fromNow()}
+              </TableCell>
+              <TableCell align="center" className={classes.semiGray}>
                 <Moment
                   date={new Date(summoner.availabilityDate)}
                   format="MM/DD/YYYY hh:mm A"
                 />
               </TableCell>
-              <TableCell align="left">
-                {moment(summoner.availabilityDate).fromNow()}
-              </TableCell>
-              <TableCell align="right">{summoner.level}</TableCell>
+              <TableCell align="right" className={classes.semiGray}>{summoner.level}</TableCell>
               <TableCell align="left">
                 {summoner.lastUpdated
                   ? moment(summoner.lastUpdated).fromNow()

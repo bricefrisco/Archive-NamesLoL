@@ -2,7 +2,7 @@ import React from "react";
 import ReplayIcon from "@material-ui/icons/Replay";
 import { CircularProgress, IconButton } from "@material-ui/core";
 import { parseResponse } from "../utils/api";
-import { getLimit, getRegion, setLimit } from "../state/settingsSlice";
+import { getBetaKey, getLimit, getRegion, toggleLimit } from "../state/settingsSlice";
 import { updateSummoner } from "../state/summonersSlice";
 import { useDispatch, useSelector } from "react-redux";
 import CheckIcon from "@material-ui/icons/Check";
@@ -16,28 +16,33 @@ const UpdateButton = ({ summonerName }: Props) => {
   const dispatch = useDispatch();
   const limit = useSelector(getLimit);
   const region = useSelector(getRegion);
+  const betaKey = useSelector(getBetaKey);
 
   const [loading, setLoading] = React.useState(false);
   const [success, setSuccess] = React.useState(false);
   const [error, setError] = React.useState<undefined | string>();
 
   const click = () => {
-    dispatch(setLimit(true));
-    setTimeout(() => dispatch(setLimit(false)), 1300);
+    if (loading || limit) return;
+
+    dispatch(toggleLimit())
 
     setError(undefined);
     setLoading(true);
     setSuccess(false);
 
-    fetch(`http://localhost:8080/${region}/summoners/${summonerName}`)
+    fetch(`http://localhost:8080/riot/${region}/summoners/${summonerName}`, {headers: {Authorization: betaKey}})
       .then(parseResponse)
-      .then((summoner) => {
+      .then((summoner: any) => {
         dispatch(updateSummoner(summoner));
         setSuccess(true);
         setLoading(false);
         setError(undefined);
       })
-      .catch((err) => setError(err));
+      .catch((err) => {
+        setLoading(false)
+        setError(err)
+      });
   };
 
   if (loading) return <CircularProgress size={24} />;

@@ -4,47 +4,26 @@ import { fetchSummoner, getLoading } from "../state/summonerSlice";
 import {
   getLimit,
   getNameInput,
-  getRegion,
+  getHideSearch,
+  setHideSearch,
   setLimit,
-  setName,
-  setRegion,
-  Region,
+  setName, toggleLimit,
 } from "../state/settingsSlice";
 import {
-  FormControl,
   IconButton,
   InputAdornment,
   makeStyles,
-  MenuItem,
-  Select,
-  TextField,
+  TextField, Tooltip,
 } from "@material-ui/core";
 import SearchIcon from "@material-ui/icons/Search";
+import Checkbox from '@material-ui/core/Checkbox';
 
 const useStyles = makeStyles((theme) => ({
   input: {
     marginTop: theme.spacing(2),
     backgroundColor: "white",
     fontFamily: "Ubuntu Mono",
-  },
-  selectForm: {
-    minWidth: 90,
-  },
-  select: {
-    height: 40,
-    paddingLeft: theme.spacing(1),
-    paddingRight: theme.spacing(1),
-    "& > .MuiSelect-root.MuiSelect-select.MuiSelect-selectMenu.MuiSelect-filled": {
-      paddingTop: 10,
-      paddingBottom: 10,
-      "&:focus,&:hover": {
-        backgroundColor: "rgba(0, 0, 0, 0)",
-      },
-    },
-    backgroundColor: "#fff",
-    fontSize: 14,
-    fontWeight: 500,
-  },
+  }
 }));
 
 const NameInput = () => {
@@ -53,11 +32,10 @@ const NameInput = () => {
   const summonerName = useSelector(getNameInput);
   const loading = useSelector(getLoading);
   const limit = useSelector(getLimit);
-  const region = useSelector(getRegion);
+  const hideSearch = useSelector(getHideSearch);
 
   const click = () => {
-    dispatch(setLimit(true));
-    setTimeout(() => dispatch(setLimit(false)), 1300);
+    dispatch(toggleLimit())
     dispatch(fetchSummoner());
   };
 
@@ -83,25 +61,9 @@ const NameInput = () => {
       InputProps={{
         endAdornment: (
           <>
-            <FormControl className={classes.selectForm}>
-              <Select
-                autoWidth
-                value={region}
-                variant="filled"
-                disableUnderline
-                className={classes.select}
-                onChange={(e) => dispatch(setRegion(e.target.value))}
-              >
-                {Object.keys(Region).map((region) => (
-                  <MenuItem
-                    key={region.toString().toUpperCase()}
-                    value={region}
-                  >
-                    {region.toString().toUpperCase()}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+            <Tooltip title="Hide search (won't add summoner name to table)">
+              <Checkbox size='small' color='default' checked={hideSearch} onChange={(e) => dispatch(setHideSearch(e.target.checked))}/>
+            </Tooltip>
             <InputAdornment position="end">
               <IconButton size="small" onClick={click}>
                 <SearchIcon />
