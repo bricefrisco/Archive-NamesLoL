@@ -41,6 +41,10 @@ app.use(cors(corsOptions)); // Apply cors settings
 app.use(bodyParser.json()); // Unmarshal request bodies to JSON formatting.
 app.use('/riot/', limiter)
 
+app.get('/', (req, res) => {
+  res.status(200).send('ok')
+})
+
 app.post('/beta-auth', (req, res) => {
   if (!req.body.key || req.body.key !== process.env.BETA_CLIENT_KEY) {
     res.status(401).json('Invalid key.')
