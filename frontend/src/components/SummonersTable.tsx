@@ -36,7 +36,7 @@ interface Summoner {
 const useStyles = makeStyles((theme) => ({
   table: {
     width: "100%",
-    maxWidth: 900,
+    maxWidth: 950,
     marginBottom: theme.spacing(2),
   },
   semiGray: {
@@ -52,6 +52,16 @@ const useStyles = makeStyles((theme) => ({
   },
   alert: {
     margin: theme.spacing(3)
+  },
+  hideOnMediumScreen: {
+    '@media (max-width: 1276px)': {
+      display: 'none'
+    }
+  },
+  hideOnSmallScreen: {
+    '@media (max-width: 1000px)': {
+      display: 'none'
+    }
   }
 }));
 
@@ -98,8 +108,8 @@ const SummonersTable = () => {
           <TableRow>
             <TableCell align="left">Name</TableCell>
             <TableCell align="left">Name Available</TableCell>
-            <TableCell align="center">Availability Date</TableCell>
-            <TableCell align="right">Level</TableCell>
+            <TableCell align="center" className={classes.hideOnSmallScreen}>Availability Date</TableCell>
+            <TableCell align="right" className={classes.hideOnMediumScreen}>Level</TableCell>
             <TableCell align="left">Last Updated</TableCell>
             <TableCell align="right">Update</TableCell>
           </TableRow>
@@ -111,13 +121,13 @@ const SummonersTable = () => {
               <TableCell align="left">
                 {moment(summoner.availabilityDate).fromNow()}
               </TableCell>
-              <TableCell align="center" className={classes.semiGray}>
+              <TableCell align="center" className={`${classes.semiGray} ${classes.hideOnSmallScreen}`}>
                 <Moment
                   date={new Date(summoner.availabilityDate)}
                   format="MM/DD/YYYY hh:mm A"
                 />
               </TableCell>
-              <TableCell align="right" className={classes.semiGray}>{summoner.level}</TableCell>
+              <TableCell align="right" className={`${classes.semiGray} ${classes.hideOnMediumScreen}`}>{summoner.level}</TableCell>
               <TableCell align="left">
                 {summoner.lastUpdated
                   ? moment(summoner.lastUpdated).fromNow()

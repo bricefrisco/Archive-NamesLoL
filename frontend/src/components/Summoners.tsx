@@ -7,16 +7,24 @@ import Pagination from "./Pagination";
 const useStyles = makeStyles((theme) => ({
     title: {
         textAlign: 'center',
+        fontFamily: "Ubuntu Mono",
         fontSize: 48,
-        fontWeight: 500,
+        fontWeight: 400,
         marginTop: theme.spacing(3),
-        marginBottom: theme.spacing(1)
+        marginBottom: theme.spacing(1),
+        '@media (max-width: 600px)': {
+            fontSize: 32
+        }
     },
     box: {
         display: 'flex',
         marginTop: theme.spacing(2),
         justifyContent: 'space-between',
-        alignItems: 'flex-start'
+        alignItems: 'flex-start',
+        '@media (max-width: 850px)': {
+            flexWrap: 'wrap',
+            flexDirection: 'column-reverse'
+        }
     },
     tableArea: {
         width: '100%'
@@ -28,7 +36,7 @@ const Summoners = () => {
 
     return (
         <>
-            <Typography variant='h2' className={classes.title}>League of Legends Names</Typography>
+            <Typography variant='h1' className={classes.title}>League of Legends Names</Typography>
             <Divider />
             <div className={classes.box}>
                 <div className={classes.tableArea}>

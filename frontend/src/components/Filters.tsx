@@ -15,11 +15,21 @@ import { setNameLength } from "../state/settingsSlice";
 const useStyles = makeStyles((theme) => ({
   card: {
     display: "inline-block",
-    minWidth: 300,
+    minWidth: 250,
     backgroundColor: "#fff",
     borderRadius: 5,
     padding: theme.spacing(2),
     marginTop: theme.spacing(6),
+    marginLeft: theme.spacing(2),
+    '@media (max-width: 850px)': {
+      marginBottom: theme.spacing(2),
+      marginTop: theme.spacing(2),
+      marginLeft: 0
+    },
+    '@media (max-width: 450px)': {
+      margin: 'auto',
+      marginBottom: theme.spacing(2)
+    }
   },
   title: {
     fontWeight: 500,

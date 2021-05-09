@@ -34,13 +34,19 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: 5,
     minHeight: 100,
     display: "flex",
-    flexWrap: "wrap",
     justifyContent: "space-around",
     alignItems: "center",
+    '@media (max-width: 800px)': {
+      padding: theme.spacing(3),
+      flexDirection: 'column',
+      '& > div, & > button': {
+        marginTop: theme.spacing(2)
+      }
+    }
   },
   available: {
     backgroundColor: "rgb(36,162,138)",
-    color: "#fff",
+    color: "#fff"
   },
   unavailable: {
     backgroundColor: "rgb(247,195,109)",
@@ -52,6 +58,10 @@ const useStyles = makeStyles((theme) => ({
   name: {
     textAlign: "center",
     fontWeight: 400,
+    '@media (max-width: 800px)': {
+      fontWeight: 500,
+      fontSize: 24
+    }
   },
   status: {
     textAlign: "center",
