@@ -29,14 +29,15 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v1
 
       - name: Make envfile
-        uses: SpicyPizza/create-envfile@v1
+        uses: SpicyPizza/create-envfile@v1.1
         with:
           envkey_RIOT_API_TOKEN: ${{ secrets.RIOT_API_TOKEN }}
           envkey_AWS_REGION: us-east-1
           envkey_AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY_ID }}
           envkey_AWS_ACCESS_SECRET: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           envkey_BETA_CLIENT_KEY: ${{ secrets.BETA_CLIENT_KEY }}
-          file_name: backend/.env
+          directory: backend
+          file_name: .env
 
       - name: BACKEND Install Dependencies
         run: cd backend && npm install
