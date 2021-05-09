@@ -39,5 +39,5 @@ jobs:
           docker build -t ${{ secrets.AWS_ECR_REGISTRY }}/${{ secrets.AWS_ECR_REPOSITORY }} backend/.
           docker push ${{ secrets.AWS_ECR_REGISTRY }}/${{ secrets.AWS_ECR_REPOSITORY }}
 
-      - name: [BACKEND] Update fargate service
+      - name: BACKEND Update fargate service
         run: aws ecs update-service --cluster ${{ secrets.AWS_CLUSTER_NAME }} --service ${{ secrets.AWS_SERVICE_NAME }} --force-new-deployment
