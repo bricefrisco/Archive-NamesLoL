@@ -43,7 +43,7 @@ jobs:
         run: cd backend && npm install
 
       - name: BACKEND Webpack
-        run: cd backend && npm run build
+        run: ls && cd backend && ls && npm run build
 
       - name: BACKEND Build, tag, and push image to Amazon ECR
         run: |
