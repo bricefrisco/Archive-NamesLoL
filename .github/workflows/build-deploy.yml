@@ -57,5 +57,5 @@ jobs:
       - name: FRONTEND webpack
         run: cd frontend && CI= npm run build
 
-      - name: Deploy to s3
-        run: aws s3 sync frontend/build s3://shopdb
+      - name: FRONTEND Deploy to s3
+        run: aws s3 sync frontend/build s3://nameslol
