@@ -71,9 +71,9 @@ const BetaAuth = () => {
 
     return (
         <Container className={classes.container}>
-            <Typography className={classes.title} variant='h2' component='h1'>LoLNames</Typography>
+            <Typography className={classes.title} variant='h2' component='h1'>NamesLoL</Typography>
             <Typography className={classes.desc}>
-                LoLNames is currently under development and is available for beta-use only. Please enter your beta key
+                NamesLoL is currently under development and is available for beta-use only. Please enter your beta key
                 below.{' '}
                 <strong>Riot employees</strong>: The beta key is included in the production application.
             </Typography>
