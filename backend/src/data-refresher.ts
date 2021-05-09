@@ -42,20 +42,20 @@ export const refreshSummonersNextThreeDays = () => {
 }
 
 export const scheduleRefreshes = () => {
-    console.log('Scheduling automatic refreshes...')
-
-    CRON.schedule('0 0 0,8,16 * * *', () => {
-        console.log('Refreshing summoners for past three days...')
-        refreshSummonersPastThreeDays();
-    })
-
-    CRON.schedule('0 0 4,12,20 * * *', () => {
-        console.log('Refreshing summoners today...')
-        refreshSummonersToday();
-    })
-
-    CRON.schedule('0 0 2 * * *', () => {
-        console.log('Refreshing summoners for next three days...')
-        refreshSummonersNextThreeDays();
-    })
+    // console.log('Scheduling automatic refreshes...')
+    //
+    // CRON.schedule('0 0 0,8,16 * * *', () => {
+    //     console.log('Refreshing summoners for past three days...')
+    //     refreshSummonersPastThreeDays();
+    // })
+    //
+    // CRON.schedule('0 0 4,12,20 * * *', () => {
+    //     console.log('Refreshing summoners today...')
+    //     refreshSummonersToday();
+    // })
+    //
+    // CRON.schedule('0 0 2 * * *', () => {
+    //     console.log('Refreshing summoners for next three days...')
+    //     refreshSummonersNextThreeDays();
+    // })
 }

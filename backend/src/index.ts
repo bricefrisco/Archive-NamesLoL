@@ -46,6 +46,8 @@ app.get('/', (req, res) => {
 })
 
 app.post('/beta-auth', (req, res) => {
+  console.log('POST - /beta-auth')
+
   if (!req.body.key || req.body.key !== process.env.BETA_CLIENT_KEY) {
     res.status(401).json('Invalid key.')
   } else {
@@ -54,6 +56,8 @@ app.post('/beta-auth', (req, res) => {
 })
 
 app.get("/:region/summoners", auth, (req, res) => {
+  console.log(`GET - ${req.params.region}/summoners`)
+
   const region = mapRegion(req.params.region);
   const timestamp = Number(req.query.timestamp);
   const backwards =
@@ -65,6 +69,8 @@ app.get("/:region/summoners", auth, (req, res) => {
   }
 
   if (nameLength) {
+    console.log('Name length: ' + nameLength)
+
     querySummonersByNameSize(region, timestamp, backwards, Number(nameLength))
       .then((data: DynamoSummonerList) => mapSummoners(data))
       .then((data) => res.json(data))
@@ -85,6 +91,8 @@ app.get("/:region/summoners", auth, (req, res) => {
 });
 
 app.get("/riot/:region/summoners/:name", auth, (req, res) => {
+  console.log(`GET - /riot/${req.params.region}/summoners/${req.params.name}`)
+
   const region = mapRegion(req.params.region);
   if (region === undefined) {
     res.status(400).json("Region is invalid.");
@@ -121,7 +129,7 @@ app.get("/riot/:region/summoners/:name", auth, (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log("Server started at http://localhost:" + port);
+  console.log("Server started on port" + port);
 });
 
 scheduleRefreshes();
