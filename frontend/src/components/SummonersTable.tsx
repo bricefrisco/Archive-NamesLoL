@@ -130,7 +130,7 @@ const SummonersTable = () => {
               <TableCell align="right" className={`${classes.semiGray} ${classes.hideOnMediumScreen}`}>{summoner.level}</TableCell>
               <TableCell align="left">
                 {summoner.lastUpdated
-                  ? moment(summoner.lastUpdated).fromNow()
+                  ? moment(summoner.lastUpdated - 1000).fromNow() // Account for slight server delay
                   : "Never"}
               </TableCell>
               <TableCell align="right">
