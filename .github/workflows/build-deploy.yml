@@ -30,18 +30,18 @@ jobs:
 
       - name: Make envfile
         run: |
-          cd backend && touch .env
-          echo RIOT_API_TOKEN=${{ secrets.RIOT_API_TOKEN }} >> backend/.env
-          echo AWS_REGION=us-east-1 >> backend/.env
-          echo AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY_ID }} >> backend/.env
-          echo AWS_ACCESS_SECRET=${{ secrets.AWS_SECRET_ACCESS_KEY }} >> backend/.env
-          echo BETA_CLIENT_KEY=${{ secrets.BETA_CLIENT_KEY }} >> backend/.env
+          cd backend
+          echo RIOT_API_TOKEN=${{ secrets.RIOT_API_TOKEN }} >> .env
+          echo AWS_REGION=us-east-1 >> .env
+          echo AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY_ID }} >> .env
+          echo AWS_ACCESS_SECRET=${{ secrets.AWS_SECRET_ACCESS_KEY }} >> .env
+          echo BETA_CLIENT_KEY=${{ secrets.BETA_CLIENT_KEY }} >> .env
 
       - name: BACKEND Install Dependencies
         run: cd backend && npm install
 
       - name: BACKEND Webpack
-        run: ls && cd backend && ls && npm run build
+        run: cd backend && npm run build
 
       - name: BACKEND Build, tag, and push image to Amazon ECR
         run: |
