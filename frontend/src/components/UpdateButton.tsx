@@ -31,7 +31,7 @@ const UpdateButton = ({ summonerName }: Props) => {
     setLoading(true);
     setSuccess(false);
 
-    fetch(`http://localhost:8080/riot/${region}/summoners/${summonerName}`, {headers: {Authorization: betaKey}})
+    fetch(`${process.env.REACT_APP_BACKEND_URI}/riot/${region}/summoners/${summonerName}`, {headers: {Authorization: betaKey}})
       .then(parseResponse)
       .then((summoner: any) => {
         dispatch(updateSummoner(summoner));
