@@ -16,7 +16,8 @@ const useStyles = makeStyles((theme) => ({
     },
     title: {
         textAlign: 'center',
-        marginBottom: theme.spacing(5)
+        marginBottom: theme.spacing(5),
+        color: '#fff'
     },
     desc: {
         lineSpacing: 1.7,
@@ -24,14 +25,32 @@ const useStyles = makeStyles((theme) => ({
         letterSpacing: 1.1,
         textAlign: 'center',
         marginBottom: theme.spacing(5),
+        color: theme.palette.text.secondary,
         maxWidth: 800
     },
     input: {
-        minWidth: '80%'
+        minWidth: '80%',
+        '& input': {
+            color: theme.palette.text.secondary
+        },
+        '& .MuiOutlinedInput-notchedOutline': {
+            borderColor: 'rgba(255, 255, 255, 0.2)',
+        },
+        '&:hover': {
+            '& .MuiOutlinedInput-notchedOutline': {
+                borderColor: 'rgb(46, 96, 156)',
+            },
+        },
+        '& .MuiInputLabel-outlined': {
+            color: 'rgba(255, 255, 255, 0.6)'
+        }
     },
     check: {
         fontSize: 150,
-        color: 'green'
+        color: '#3CB280'
+    },
+    visibility: {
+        color: theme.palette.text.secondary
     }
 }))
 
@@ -91,6 +110,7 @@ const BetaAuth = () => {
                     endAdornment: (
                         <InputAdornment position='end'>
                             <IconButton
+                                className={classes.visibility}
                                 aria-label='Toggle password visibility'
                                 onClick={() => setShowKey(!showKey)}
                             >

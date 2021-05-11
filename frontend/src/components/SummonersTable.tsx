@@ -35,12 +35,32 @@ interface Summoner {
 
 const useStyles = makeStyles((theme) => ({
   table: {
+    cursor: 'default',
     width: "100%",
     maxWidth: 950,
     marginBottom: theme.spacing(2),
+    backgroundColor: theme.palette.primary.main,
+    border: '1px solid rgba(145, 158, 171, 0.24)'
   },
-  semiGray: {
-    color: 'rgba(0, 0, 0, 0.75)'
+  tableCellHeader: {
+    color: theme.palette.text.primary,
+    borderColor: 'rgb(46,50,54)',
+    height: 60,
+    fontWeight: 600
+  },
+  tableCell: {
+    color: theme.palette.text.secondary,
+    borderColor: 'rgb(46,50,54)',
+    height: 46,
+  },
+  tableRow: {
+    '&:hover': {
+      backgroundColor: 'rgba(255, 255, 255, 0.08)',
+      transition: 'background-color 0.35s ease'
+    }
+  },
+  name: {
+    fontWeight: 500
   },
   link: {
     color: '#0d6efd',
@@ -53,15 +73,8 @@ const useStyles = makeStyles((theme) => ({
   alert: {
     margin: theme.spacing(3)
   },
-  hideOnMediumScreen: {
-    '@media (max-width: 1276px)': {
-      display: 'none'
-    }
-  },
-  hideOnSmallScreen: {
-    '@media (max-width: 1000px)': {
-      display: 'none'
-    }
+  loading: {
+    backgroundColor: '#2e609c',
   }
 }));
 
@@ -82,9 +95,7 @@ const SummonersTable = () => {
 
   if (loading)
     return (
-      <div className={classes.table}>
-        <LinearProgress />
-      </div>
+      <LinearProgress className={classes.loading}/>
     );
 
   if (error) {
@@ -106,34 +117,34 @@ const SummonersTable = () => {
       <Table size="small">
         <TableHead>
           <TableRow>
-            <TableCell align="left">Name</TableCell>
-            <TableCell align="left">Name Available</TableCell>
-            <TableCell align="center" className={classes.hideOnSmallScreen}>Availability Date</TableCell>
-            <TableCell align="right" className={classes.hideOnMediumScreen}>Level</TableCell>
-            <TableCell align="left">Last Updated</TableCell>
-            <TableCell align="right">Update</TableCell>
+            <TableCell align="left" className={classes.tableCellHeader}>Name</TableCell>
+            <TableCell align="left" className={classes.tableCellHeader}>Name Available</TableCell>
+            <TableCell align="center" className={classes.tableCellHeader}>Availability Date</TableCell>
+            <TableCell align="right" className={classes.tableCellHeader}>Level</TableCell>
+            <TableCell align="left" className={classes.tableCellHeader}>Last Updated</TableCell>
+            <TableCell align="right" className={classes.tableCellHeader}>Update</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {summoners.map((summoner: Summoner, idx: number) => (
-            <TableRow key={idx}>
-              <TableCell align="left">{summoner.name}</TableCell>
-              <TableCell align="left">
+            <TableRow key={idx} className={classes.tableRow}>
+              <TableCell align="left" className={`${classes.tableCell} ${classes.name}`} width={100}>{summoner.name}</TableCell>
+              <TableCell align="left" className={classes.tableCell} width={150}>
                 {moment(summoner.availabilityDate).fromNow()}
               </TableCell>
-              <TableCell align="center" className={`${classes.semiGray} ${classes.hideOnSmallScreen}`}>
+              <TableCell align="center" className={`${classes.tableCell}`} width={200}>
                 <Moment
                   date={new Date(summoner.availabilityDate)}
                   format="MM/DD/YYYY hh:mm A"
                 />
               </TableCell>
-              <TableCell align="right" className={`${classes.semiGray} ${classes.hideOnMediumScreen}`}>{summoner.level}</TableCell>
-              <TableCell align="left">
+              <TableCell align="right" className={`${classes.tableCell}`} width={100}>{summoner.level}</TableCell>
+              <TableCell align="left" className={classes.tableCell} width={150}>
                 {summoner.lastUpdated
                   ? moment(summoner.lastUpdated - 5000).fromNow() // Account for slight server delay
                   : "Never"}
               </TableCell>
-              <TableCell align="right">
+              <TableCell align="right" className={classes.tableCell} width={100}>
                 <UpdateButton summonerName={summoner.name} />
               </TableCell>
             </TableRow>

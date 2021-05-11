@@ -19,11 +19,21 @@ import Checkbox from '@material-ui/core/Checkbox';
 
 const useStyles = makeStyles((theme) => ({
     input: {
+        backgroundColor: 'rgba(255, 255, 255, 0.02)',
         marginTop: theme.spacing(2),
-        backgroundColor: "white",
         fontFamily: "Ubuntu Mono",
+        '& > div': {
+            '&::before': {
+                borderColor: 'rgb(46,50,54)!important',
+            },
+            color: theme.palette.text.secondary
+        },
+        '& input': {
+            marginLeft: theme.spacing(1)
+        }
     },
     hideSearch: {
+        color: theme.palette.text.secondary,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'flex-end'
@@ -33,6 +43,9 @@ const useStyles = makeStyles((theme) => ({
         fontWeight: 500,
         minWidth: 70,
         marginRight: theme.spacing(-1.6)
+    },
+    searchIcon: {
+        color: theme.palette.text.secondary
     }
 }));
 
@@ -57,8 +70,7 @@ const NameInput = () => {
 
     return (
         <TextField
-            id="summoner-name"
-            variant="outlined"
+            variant="standard"
             size="small"
             fullWidth
             className={classes.input}
@@ -80,7 +92,7 @@ const NameInput = () => {
                         </div>
                         <InputAdornment position="end">
                             <IconButton size="small" onClick={click}>
-                                <SearchIcon/>
+                                <SearchIcon className={classes.searchIcon}/>
                             </IconButton>
                         </InputAdornment>
                     </>

@@ -6,14 +6,13 @@ import Pagination from "./Pagination";
 
 const useStyles = makeStyles((theme) => ({
     title: {
-        textAlign: 'center',
-        fontFamily: "Ubuntu Mono",
-        fontSize: 48,
+        color: theme.palette.text.secondary,
+        fontSize: 24,
         fontWeight: 400,
-        marginTop: theme.spacing(3),
-        marginBottom: theme.spacing(1),
+        marginTop: theme.spacing(4),
+        marginBottom: theme.spacing(3),
         '@media (max-width: 600px)': {
-            fontSize: 32
+            fontSize: 24
         }
     },
     box: {
@@ -36,8 +35,9 @@ const Summoners = () => {
 
     return (
         <>
-            <Typography variant='h1' className={classes.title}>League of Legends Names</Typography>
-            <Divider />
+            <Typography variant='h1' className={classes.title}>
+                Upcoming and expired summoner names
+            </Typography>
             <div className={classes.box}>
                 <div className={classes.tableArea}>
                     <Pagination showWhenLoading={false}/>

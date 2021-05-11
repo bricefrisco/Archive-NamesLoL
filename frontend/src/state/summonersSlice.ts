@@ -91,7 +91,7 @@ export const updateSummoner = (summoner: SummonerData) => (
 ) => {
     const summoners = getState().summoners.summoners;
     const updatedSummoners = summoners.map((s: SummonerData) => {
-        if (s.name.toLowerCase() !== summoner.name.toLowerCase()) return s;
+        if (s.name.replace(/ /g, '').toLowerCase() !== summoner.name.replace(/ /g, '').toLowerCase()) return s;
         return {...summoner, name: s.name.toLowerCase()};
     });
     dispatch(loaded(updatedSummoners));

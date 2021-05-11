@@ -6,6 +6,7 @@ import Summoners from "./Summoners";
 import {useSelector} from "react-redux";
 import {getLoaded} from "../state/settingsSlice";
 import {useHistory} from "react-router-dom";
+import Footer from "./Footer";
 
 const NamesLoL = () => {
     const betaAuthenticated = useSelector(getLoaded);
@@ -16,11 +17,14 @@ const NamesLoL = () => {
     }
 
     return (
-        <Container>
-            <NameInput/>
-            <Summoner/>
-            <Summoners/>
-        </Container>
+        <>
+            <Container color='secondary'>
+                <NameInput/>
+                <Summoner/>
+                <Summoners/>
+            </Container>
+            <Footer/>
+        </>
     );
 };
 

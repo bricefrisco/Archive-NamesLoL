@@ -15,11 +15,13 @@ import { setNameLength } from "../state/settingsSlice";
 const useStyles = makeStyles((theme) => ({
   card: {
     display: "inline-block",
+    color: theme.palette.text.secondary,
     minWidth: 250,
-    backgroundColor: "#fff",
+    backgroundColor: theme.palette.primary.main,
+    border: '1px solid rgba(145, 158, 171, 0.24)',
     borderRadius: 5,
     padding: theme.spacing(2),
-    marginTop: theme.spacing(6),
+    marginTop: theme.spacing(6.4),
     marginLeft: theme.spacing(2),
     '@media (max-width: 850px)': {
       marginBottom: theme.spacing(2),
@@ -44,6 +46,12 @@ const useStyles = makeStyles((theme) => ({
     width: "100%",
     marginTop: theme.spacing(2),
   },
+  select: {
+      '&::before': {
+        borderColor: 'rgb(255, 255, 255, 0.2)!important',
+      },
+      color: theme.palette.text.secondary
+  }
 }));
 
 const menuItems = ["Any", 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
@@ -68,6 +76,7 @@ const Filters = () => {
           labelId="filter-name-length-input"
           value={nl}
           onChange={(e) => setNL(e.target.value)}
+          className={classes.select}
         >
           {menuItems.map((item) => (
             <MenuItem key={item} value={item}>
@@ -79,7 +88,7 @@ const Filters = () => {
       <Button
         className={classes.button}
         variant="outlined"
-        color="primary"
+        // color="secondary"
         onClick={apply}
       >
         Apply

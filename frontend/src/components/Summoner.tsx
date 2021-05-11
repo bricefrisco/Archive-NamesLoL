@@ -45,15 +45,14 @@ const useStyles = makeStyles((theme) => ({
     }
   },
   available: {
-    backgroundColor: "rgb(36,162,138)",
+    backgroundColor: "rgb(61,177,128)",
     color: "#fff"
   },
   unavailable: {
-    backgroundColor: "rgb(247,195,109)",
-    color: "#000",
-  },
-  neverAvailable: {
-    backgroundColor: "rgb(183,107,162)",
+    backgroundColor: "rgb(255,152,0)",
+    '& > button': {
+      color: 'black'
+    }
   },
   name: {
     textAlign: "center",
@@ -74,10 +73,11 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     justifyContent: "flex-end",
     fontSize: 12,
-    color: "grey",
+    color: "lightgray",
   },
   loading: {
     marginTop: theme.spacing(2),
+    backgroundColor: '#2e609c'
   },
   close: {
     '&::before': {
